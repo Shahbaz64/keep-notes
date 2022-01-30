@@ -1,19 +1,14 @@
 import React from "react";
-import {
-  Drawer as MuiDrawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import { v4 as uuid } from "uuid";
+import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { listItems } from "components/drawer/drawerList";
+import { Drawer as MuiDrawer } from "@mui/material";
 import { useStyles } from "components/drawer/drawer.style";
+import ItemList from "components/drawer/items-list/itemsList";
 
-const Drawer = () => {
+const Drawer = ({ handleDialog, labels }) => {
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
   const classes = useStyles();
+
   return (
     <MuiDrawer
       className={classes.drawer}
@@ -21,16 +16,19 @@ const Drawer = () => {
       anchor="left"
       open={isOpenDrawer}
     >
-      <List>
-        {listItems.map((item) => (
-          <ListItem button key={uuid()}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText>{item.text}</ListItemText>
-          </ListItem>
-        ))}
-      </List>
+      <ItemList handleDialog={handleDialog} labels={labels} />
     </MuiDrawer>
   );
+};
+
+Drawer.propTypes = {
+  handleDialog: PropTypes.func.isRequired,
+  labels: PropTypes.array.isRequired,
+};
+
+Drawer.defaultProps = {
+  handleDialog: () => {},
+  labels: [],
 };
 
 export default Drawer;

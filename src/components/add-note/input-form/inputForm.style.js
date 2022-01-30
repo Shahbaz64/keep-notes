@@ -14,9 +14,10 @@ export const useStyles = makeStyles({
     padding: "16px",
     paddingBottom: "8px",
   },
-  submitButton: {
-    display: "inline",
-    marginLeft: "auto",
+  actions: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "10px",
     marginRight: "0",
     marginBottom: "0",
   },

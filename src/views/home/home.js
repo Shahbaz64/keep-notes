@@ -1,55 +1,64 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import AppBar from "components/appbar/appbar";
 import Drawer from "components/drawer/drawer";
 import Note from "components/note/note";
 import Masonry from "react-masonry-css";
 import { useStyles } from "views/home/home.style";
 import ProgressBar from "components/progress-bar/progressBar";
-import { addNote } from "store";
-import { getAllNotes } from "database/config-firebase";
-import { useEffect } from "react";
-import { signOutUser } from "store";
+import { addNote, addLabel, signOutUser, showDialog } from "store";
+import { getAllLabels, getAllNotes } from "database/config-firebase";
 import InputBar from "components/add-note/input-bar/inputBar";
 import InputForm from "components/add-note/input-form/inputForm";
 import SnackBar from "components/snackbar/snackBar";
+import LabelDialog from "components/label-dialog/labelDialog";
+import { nanoid } from "nanoid";
 
 const HomePage = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
-  const notesLoading = useSelector((state) => state.notesReducer.loading);
   const uid = useSelector((state) => state.authReducer.user.uid);
   const notes = useSelector((state) => state.notesReducer.notes);
+  const labels = useSelector((state) => state.notesReducer.labels);
   const isError = useSelector((state) => state.notesReducer.isError);
   const errorMsg = useSelector((state) => state.notesReducer.errorMsg);
+  const notesLoading = useSelector((state) => state.notesReducer.loading);
   const isloggedIn = useSelector((state) => state.authReducer.isLoggedIn);
+  const isOpenDialog = useSelector((state) => state.toggleReducer.isOpenDialog);
+  const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
   const isOpenInputBar = useSelector(
     (state) => state.toggleReducer.isOpenInputBar
   );
-  // console.log(isloggedIn);
 
   const breakPoint = {
-    default: 5,
-    1250: 4,
-    1100: 3,
-    800: 2,
-    500: 1,
+    default: 6,
+    1250: 5,
+    1100: 4,
+    900: 3,
+    700: 2,
+    450: 1,
   };
 
   const signOutHandler = () => {
     dispatch(signOutUser());
   };
 
-  const addNotesHandler = async (title, text) => {
-    dispatch(addNote({ title, text }));
+  const addNotesHandler = async (title, text, color) => {
+    dispatch(addNote({ title, text, color }));
+  };
+
+  const openDialogHandler = () => {
+    dispatch(showDialog());
+  };
+
+  const addLabelHandler = (label) => {
+    dispatch(addLabel(label));
   };
 
   useEffect(() => {
-    console.log(uid);
     dispatch(getAllNotes(uid));
-    console.log(notes);
+    dispatch(getAllLabels(uid));
   }, []);
 
   return (
@@ -63,7 +72,7 @@ const HomePage = () => {
       ) : (
         <div className={classes.body}>
           <AppBar handleSignOut={signOutHandler} />
-          <Drawer />
+          <Drawer handleDialog={openDialogHandler} labels={labels} />
           <div
             className={
               isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft
@@ -81,11 +90,19 @@ const HomePage = () => {
                 columnClassName="my-masonry-grid_column"
               >
                 {notes.map((note) => (
-                  <div key={note.id}>
-                    <Note title={note.title} text={note.text} />
-                  </div>
+                  <Note
+                    key={nanoid()}
+                    title={note.title}
+                    text={note.text}
+                    color={note.color}
+                  />
                 ))}
               </Masonry>
+              <LabelDialog
+                open={isOpenDialog}
+                labels={labels}
+                handleLabelAdd={addLabelHandler}
+              />
             </div>
           </div>
         </div>

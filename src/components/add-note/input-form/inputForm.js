@@ -1,20 +1,41 @@
 import PropTypes from "prop-types";
 import { showInputBar } from "store";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Card, TextField, Button } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { Card, TextField, Button, IconButton } from "@mui/material";
 import { useStyles } from "components/add-note/input-form/inputForm.style";
+import PaletteIcon from "@mui/icons-material/Palette";
+import PopOver from "components/add-note/input-form/pop-over/popOver";
+import { showPopOver, hidePopOver } from "store";
 
 const InputForm = ({ handleAddNote }) => {
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [color, setColor] = useState("");
+  const [anchor, setAnchor] = useState(null);
   const dispatch = useDispatch();
   const classes = useStyles();
+  const isOpenPopOver = useSelector(
+    (state) => state.toggleReducer.isOpenPopOver
+  );
+  const openPopover = (event) => {
+    setAnchor(event.currentTarget);
+    dispatch(showPopOver());
+  };
+
+  const closePopOver = () => {
+    dispatch(hidePopOver());
+  };
+
+  const getColor = (color) => {
+    setColor(color);
+    dispatch(hidePopOver());
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (title && text) {
-      handleAddNote(title, text);
+      handleAddNote(title, text, color);
       setText("");
       setTitle("");
       dispatch(showInputBar());
@@ -28,9 +49,14 @@ const InputForm = ({ handleAddNote }) => {
   };
 
   return (
-    <Card elevation={4} className={classes.addNoteCard}>
+    <Card
+      elevation={4}
+      className={classes.addNoteCard}
+      sx={{ borderRadius: "10px" }}
+    >
       <form
         className={classes.inputForm}
+        style={{ backgroundColor: `${color}` }}
         noValidate
         autoComplete="off"
         onSubmit={handleSubmit}
@@ -59,12 +85,22 @@ const InputForm = ({ handleAddNote }) => {
             disableUnderline: true,
           }}
         />
-        <div className={classes.submitButton}>
+        <div className={classes.actions}>
+          <IconButton onClick={openPopover}>
+            <PaletteIcon fontSize="small" />
+          </IconButton>
           <Button type="submit" variant="text" color="inherit">
-            close
+            Close
           </Button>
         </div>
       </form>
+      <PopOver
+        open={isOpenPopOver}
+        anchor={anchor}
+        openPopOver={openPopover}
+        closePopOver={closePopOver}
+        getColor={getColor}
+      />
     </Card>
   );
 };

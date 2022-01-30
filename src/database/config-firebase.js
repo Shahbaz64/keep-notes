@@ -1,7 +1,7 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "firebase/auth";
 import { doc, collection, getDocs, getFirestore } from "firebase/firestore";
-import { getNotes } from "store";
+import { getNotes, getLabels } from "store";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -34,6 +34,24 @@ export const getAllNotes = (userId) => async (dispatch) => {
   }
 };
 
+export const getAllLabels = (userId) => async (dispatch) => {
+  try {
+    const snapshot = await getDocs(labelsRef(userId));
+    const labels = snapshot.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id };
+    });
+    dispatch(getLabels({ labels }));
+  } catch (err) {
+    dispatch(
+      getLabels({
+        labels: [],
+        isError: true,
+        errorMsg: err.message,
+      })
+    );
+  }
+};
+
 export const usersRef = (userId) => {
   return doc(db, "users", userId);
 };
@@ -42,6 +60,14 @@ export const notesRef = (userId) => {
   return collection(db, "users", userId, "notes");
 };
 
-export const newNoteRef = (userId, noteId) => {
+export const labelsRef = (userId) => {
+  return collection(db, "users", userId, "labels");
+};
+
+export const labelDocRef = (userId, docId) => {
+  return doc(db, "users", userId, "labels", docId);
+};
+
+export const noteDocRef = (userId, noteId) => {
   return doc(db, "users", userId, "notes", noteId);
 };

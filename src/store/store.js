@@ -9,9 +9,9 @@ import notesSlice from "store/notes-slice/notes.slice";
 import togglesSlice from "store/toggle-slice/toggles.slice";
 
 const rootReducer = combineReducers({
-  toggleReducer: togglesSlice,
   authReducer: authSlice,
   notesReducer: notesSlice,
+  toggleReducer: togglesSlice,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));

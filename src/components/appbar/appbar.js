@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import {
   AppBar as MuiAppBar,
   Grid,
@@ -10,39 +11,18 @@ import {
   IconButton,
   SvgIcon,
 } from "@mui/material";
+import { toggleDrawer } from "store";
+import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import InvertColorsIcon from "@mui/icons-material/InvertColors";
-import TableRowsIcon from "@mui/icons-material/TableRows";
-import LogoutIcon from "@mui/icons-material/Logout";
-import { useDispatch } from "react-redux";
-import { toggleDrawer } from "store";
-import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
-import { v4 as uuid } from "uuid";
 import { useStyles } from "components/appbar/appbar.style";
-import { useMediaQuery } from "@mui/material";
+import Actions from "components/appbar/appbar-actions/actions";
+import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
 
 const AppBar = ({ handleSignOut }) => {
   const isSearchBar = useMediaQuery("(min-width: 600px)");
   const dispatch = useDispatch();
   const classes = useStyles();
-  const actions = [
-    {
-      icon: <TableRowsIcon />,
-      title: "Grid View",
-      handleClick: handleSignOut,
-    },
-    {
-      icon: <InvertColorsIcon />,
-      title: "Dark Mode",
-      handleClick: handleSignOut,
-    },
-    {
-      icon: <LogoutIcon />,
-      title: "Logout",
-      handleClick: handleSignOut,
-    },
-  ];
 
   return (
     <MuiAppBar
@@ -86,13 +66,7 @@ const AppBar = ({ handleSignOut }) => {
               </Grid>
             )}
             <Grid item>
-              {actions.map((icon) => (
-                <Tooltip key={uuid()} title={icon.title}>
-                  <IconButton onClick={icon.handleClick} size="large">
-                    {icon.icon}
-                  </IconButton>
-                </Tooltip>
-              ))}
+              <Actions handleSignOut={handleSignOut} />
             </Grid>
           </div>
         </Grid>

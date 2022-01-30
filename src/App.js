@@ -14,8 +14,10 @@ const theme = createTheme({
       main: "#FFC107",
     },
   },
-  shape: {
-    borderRadius: 8,
+  typography: {
+    button: {
+      textTransform: "none",
+    },
   },
 });
 
