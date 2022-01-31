@@ -44,7 +44,7 @@ const HomePage = () => {
     dispatch(signOutUser());
   };
 
-  const addNotesHandler = async (title, text, color) => {
+  const addNotesHandler = (title, text, color) => {
     dispatch(addNote({ title, text, color }));
   };
 

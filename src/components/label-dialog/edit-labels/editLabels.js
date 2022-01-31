@@ -14,6 +14,8 @@ const EditLabels = ({ labels }) => {
   const dispatch = useDispatch();
   const [newLabels, setNewLabels] = useState(labels);
   const [isFocused, setIsFocused] = useState(-1);
+  const [isHovered, setIsHovered] = useState(-1);
+
   const inputRefs = [];
 
   const setRef = (ref) => {
@@ -46,7 +48,6 @@ const EditLabels = ({ labels }) => {
   const handleUpdateLabel = (index) => {
     const labelName = newLabels[index].name;
     const labelId = newLabels[index].id;
-    console.log(labelName, labelId);
     dispatch(updateLabel({ labelId, labelName }));
   };
 
@@ -62,12 +63,18 @@ const EditLabels = ({ labels }) => {
         setRef(ref);
         return (
           <div key={label.id}>
-            {isFocused === index ? (
-              <IconButton onClick={() => handleDeleteLabel(index)}>
+            {isHovered === index || isFocused === index ? (
+              <IconButton
+                onClick={() => handleDeleteLabel(index)}
+                onMouseLeave={() => setIsHovered(-1)}
+              >
                 <DeleteIcon fontSize="small" />
               </IconButton>
             ) : (
-              <IconButton>
+              <IconButton
+                onMouseEnter={() => setIsHovered(index)}
+                onMouseLeave={() => setIsHovered(-1)}
+              >
                 <LabelIcon fontSize="small" />
               </IconButton>
             )}

@@ -13,6 +13,7 @@ const InputBar = () => {
       elevation={4}
       className={classes.inputBar}
       onClick={() => dispatch(hideInputBar())}
+      sx={{ borderRadius: "8px" }}
     >
       Take a Note...
     </Card>

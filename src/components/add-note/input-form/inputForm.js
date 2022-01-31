@@ -52,7 +52,7 @@ const InputForm = ({ handleAddNote }) => {
     <Card
       elevation={4}
       className={classes.addNoteCard}
-      sx={{ borderRadius: "10px" }}
+      sx={{ borderRadius: "8px" }}
     >
       <form
         className={classes.inputForm}
