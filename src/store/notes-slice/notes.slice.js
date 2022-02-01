@@ -1,19 +1,45 @@
-import { nanoid } from "nanoid";
-import { deleteDoc, setDoc, updateDoc } from "firebase/firestore";
-import { createSlice } from "@reduxjs/toolkit";
-import { noteDocRef, labelDocRef } from "database/config-firebase";
+import { deleteDoc, updateDoc, getDocs, addDoc } from "firebase/firestore";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { notesRef, labelsRef, labelDocRef } from "database/config-firebase";
 
-const userId = localStorage.getItem("id") ?? "";
+export const getNotes = createAsyncThunk("getNotes", async (userId) => {
+  const response = await getDocs(notesRef(userId));
+  const notes = response.docs.map((doc) => {
+    return { ...doc.data(), id: doc.id };
+  });
+  return notes;
+});
+
+export const getLabels = createAsyncThunk("getLabels", async (userId) => {
+  const response = await getDocs(labelsRef(userId));
+  const labels = response.docs.map((doc) => {
+    return { ...doc.data(), id: doc.id };
+  });
+  return labels;
+});
+
+export const addLabel = createAsyncThunk("addLabel", async (data) => {
+  const { userId, label } = data;
+  const response = await addDoc(labelsRef(userId), {
+    name: label,
+  });
+  const newLabel = { name: label, id: response.id };
+  return newLabel;
+});
+
+export const addNote = createAsyncThunk("addNote", async (data) => {
+  const { userId, title, text, color } = data;
+  const response = await addDoc(notesRef(userId), {
+    title: title,
+    text: text,
+    color: color,
+  });
+  const newNote = { title: title, text: text, color: color, id: response.id };
+  return newNote;
+});
+
 const initialState = {
-  userId: userId,
-  note: {
-    title: "",
-    text: "",
-    color: "",
-  },
-  label: {
-    name: "",
-  },
+  userId: "",
   notes: [],
   labels: [],
   loading: true,
@@ -22,28 +48,65 @@ const initialState = {
 };
 
 export const notesSlice = createSlice({
-  name: "notesSlice",
+  name: "notes",
   initialState,
+  extraReducers: {
+    [getNotes.pending]: (state) => {
+      state.loading = true;
+    },
+    [getNotes.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.notes = action.payload;
+    },
+    [getNotes.rejected]: (state) => {
+      state.loading = false;
+      state.isError = true;
+      state.errorMsg = "ERROR getting Notes";
+    },
+
+    [getLabels.pending]: (state) => {
+      state.loading = true;
+    },
+    [getLabels.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.labels = action.payload;
+    },
+    [getLabels.rejected]: (state) => {
+      state.loading = false;
+      state.isError = true;
+      state.errorMsg = "ERROR getting Notes";
+    },
+
+    [addLabel.pending]: (state) => {
+      state.loading = false;
+    },
+    [addLabel.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.labels = [...state.labels, action.payload];
+    },
+    [addLabel.rejected]: (state) => {
+      state.loading = false;
+      state.isError = true;
+      state.errorMsg = "ERROR adding Labels";
+    },
+
+    [addNote.pending]: (state) => {
+      state.loading = false;
+    },
+    [addNote.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.notes = [...state.notes, action.payload];
+    },
+    [addNote.rejected]: (state) => {
+      state.loading = false;
+      state.isError = true;
+      state.errorMsg = "ERROR adding Labels";
+    },
+  },
+
   reducers: {
     setUserId: (state, action) => {
-      localStorage.setItem("id", action.payload);
       state.userId = action.payload;
-    },
-
-    addNote: (state, action) => {
-      state.note = action.payload;
-      const docId = nanoid();
-      setDoc(noteDocRef(state.userId, docId), state.note);
-      state.notes = [...state.notes, state.note];
-    },
-
-    addLabel: (state, action) => {
-      state.label.name = action.payload;
-      const docId = nanoid();
-      setDoc(labelDocRef(state.userId, docId), {
-        name: action.payload,
-      });
-      state.labels = [...state.labels, { name: state.label.name, id: docId }];
     },
 
     updateLabel: (state, action) => {
@@ -59,13 +122,6 @@ export const notesSlice = createSlice({
       });
     },
 
-    getLabels: (state, action) => {
-      state.labels = action.payload.labels;
-      state.loading = false;
-      state.isError = action.payload.isError;
-      state.errorMsg = action.payload.errorMsg;
-    },
-
     deleteLabel: (state, action) => {
       deleteDoc(labelDocRef(state.userId, action.payload.labelId));
       state.labels.map((label, index) => {
@@ -74,23 +130,8 @@ export const notesSlice = createSlice({
         }
       });
     },
-
-    getNotes: (state, action) => {
-      state.notes = action.payload.notes;
-      state.loading = false;
-      state.isError = action.payload.isError;
-      state.errorMsg = action.payload.errorMsg;
-    },
   },
 });
 
-export const {
-  setUserId,
-  addNote,
-  getNotes,
-  addLabel,
-  getLabels,
-  updateLabel,
-  deleteLabel,
-} = notesSlice.actions;
+export const { setUserId, updateLabel, deleteLabel } = notesSlice.actions;
 export default notesSlice.reducer;

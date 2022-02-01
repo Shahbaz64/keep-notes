@@ -1,7 +1,7 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "firebase/auth";
-import { doc, collection, getDocs, getFirestore } from "firebase/firestore";
-import { getNotes, getLabels } from "store";
+import { doc, collection, getFirestore } from "firebase/firestore";
+// import { addLabel } from "store";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,43 +16,14 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-export const getAllNotes = (userId) => async (dispatch) => {
-  try {
-    const snapshot = await getDocs(notesRef(userId));
-    const notes = snapshot.docs.map((doc) => {
-      return { ...doc.data(), id: doc.id };
-    });
-    dispatch(getNotes({ notes }));
-  } catch (err) {
-    dispatch(
-      getNotes({
-        notes: [],
-        isError: true,
-        errorMsg: err.message,
-      })
-    );
-  }
-};
+// export const addnewLabel = (userId, label) => async (dispatch) => {
+//   const labelDoc = await addDoc(labelDocRef(userId), {
+//     name: label,
+//   });
+//   dispatch(addLabel({ id: labelDoc.id, label: label }));
+// };
 
-export const getAllLabels = (userId) => async (dispatch) => {
-  try {
-    const snapshot = await getDocs(labelsRef(userId));
-    const labels = snapshot.docs.map((doc) => {
-      return { ...doc.data(), id: doc.id };
-    });
-    dispatch(getLabels({ labels }));
-  } catch (err) {
-    dispatch(
-      getLabels({
-        labels: [],
-        isError: true,
-        errorMsg: err.message,
-      })
-    );
-  }
-};
-
-export const usersRef = (userId) => {
+export const userDocRef = (userId) => {
   return doc(db, "users", userId);
 };
 
@@ -68,6 +39,6 @@ export const labelDocRef = (userId, docId) => {
   return doc(db, "users", userId, "labels", docId);
 };
 
-export const noteDocRef = (userId, noteId) => {
-  return doc(db, "users", userId, "notes", noteId);
-};
+// export const noteDocRef = (userId, docId) => {
+//   return doc(db, "users", userId, "notes", docId);
+// };

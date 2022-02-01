@@ -1,9 +1,4 @@
-import {
-  combineReducers,
-  createStore,
-  applyMiddleware,
-} from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authSlice from "store/auth-slice/auth.slice";
 import notesSlice from "store/notes-slice/notes.slice";
 import togglesSlice from "store/toggle-slice/toggles.slice";
@@ -14,4 +9,4 @@ const rootReducer = combineReducers({
   toggleReducer: togglesSlice,
 });
 
-export const store = createStore(rootReducer, applyMiddleware(thunk));
+export const store = configureStore({ reducer: rootReducer });

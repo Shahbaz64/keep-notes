@@ -6,8 +6,13 @@ import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import { nanoid } from "nanoid";
+import { useStyles } from "components/drawer/items-list/itemsList.style";
+import { useLocation } from "react-router-dom";
 
 const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
+  const location = useLocation();
+  const classes = useStyles();
+
   const listItems = [
     {
       icon: <LightbulbOutlinedIcon />,
@@ -54,7 +59,14 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
             }
           } else {
             return (
-              <ListItem button key={nanoid()} onClick={item.handleClick}>
+              <ListItem
+                button
+                key={nanoid()}
+                onClick={item.handleClick}
+                className={
+                  location.pathname == item.path ? classes.active : null
+                }
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText>{item.text}</ListItemText>
               </ListItem>

@@ -1,15 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { setDoc } from "firebase/firestore";
-import { usersRef } from "database/config-firebase";
-import { auth } from "database/config-firebase";
 import { signOut } from "firebase/auth";
+import { setDoc } from "firebase/firestore";
+import { createSlice } from "@reduxjs/toolkit";
+import { userDocRef, auth } from "database/config-firebase";
 
-const userId = localStorage.getItem("id") ?? "";
-const isLoggedIn = localStorage.getItem("user") ?? "";
 const initialState = {
-  isLoggedIn: isLoggedIn,
+  isLoading: true,
   user: {
-    uid: userId,
+    uid: "",
     email: "",
     displayName: "",
     photoURL: "",
@@ -21,15 +18,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     signInUser: (state, action) => {
-      localStorage.setItem("user", true);
-      state.isLoggedIn = true;
       state.user = action.payload;
-      setDoc(usersRef(state.user.uid), {});
+      setDoc(userDocRef(state.user.uid), {});
     },
-    signOutUser: (state) => {
-      localStorage.setItem("user", false);
-      localStorage.setItem("id", "");
-      state.isLoggedIn = false;
+    signOutUser: () => {
       signOut(auth);
     },
   },
