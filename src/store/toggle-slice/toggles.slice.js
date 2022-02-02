@@ -6,6 +6,7 @@ const initialState = {
   isOpenSnackBar: false,
   isOpenDialog: false,
   isOpenPopOver: false,
+  toggleView: false,
 };
 
 export const togglesSlice = createSlice({
@@ -37,6 +38,13 @@ export const togglesSlice = createSlice({
         state.isOpenDrawer = true;
       }
     },
+    toggleView: (state) => {
+      if (state.toggleView === true) {
+        state.toggleView = false;
+      } else {
+        state.toggleView = true;
+      }
+    },
     showSnackBar: (state) => {
       state.isOpenSnackBar = true;
     },
@@ -50,6 +58,7 @@ export const {
   showInputBar,
   hideInputBar,
   toggleDrawer,
+  toggleView,
   showSnackBar,
   hideSnackBar,
   showDialog,

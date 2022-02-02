@@ -1,6 +1,11 @@
 import { deleteDoc, updateDoc, getDocs, addDoc } from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { notesRef, labelsRef, labelDocRef } from "database/config-firebase";
+import {
+  notesRef,
+  labelsRef,
+  labelDocRef,
+  noteDocRef,
+} from "database/config-firebase";
 
 export const getNotes = createAsyncThunk("getNotes", async (userId) => {
   const response = await getDocs(notesRef(userId));
@@ -130,8 +135,18 @@ export const notesSlice = createSlice({
         }
       });
     },
+
+    deleteNote: (state, action) => {
+      deleteDoc(noteDocRef(state.userId, action.payload.noteId));
+      state.notes.map((note, index) => {
+        if (note.id === action.payload.noteId) {
+          return state.notes.splice(index, 1);
+        }
+      });
+    },
   },
 });
 
-export const { setUserId, updateLabel, deleteLabel } = notesSlice.actions;
+export const { setUserId, updateLabel, deleteLabel, deleteNote } =
+  notesSlice.actions;
 export default notesSlice.reducer;

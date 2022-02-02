@@ -1,7 +1,6 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "firebase/auth";
 import { doc, collection, getFirestore } from "firebase/firestore";
-// import { addLabel } from "store";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -15,13 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-
-// export const addnewLabel = (userId, label) => async (dispatch) => {
-//   const labelDoc = await addDoc(labelDocRef(userId), {
-//     name: label,
-//   });
-//   dispatch(addLabel({ id: labelDoc.id, label: label }));
-// };
 
 export const userDocRef = (userId) => {
   return doc(db, "users", userId);
@@ -39,6 +31,6 @@ export const labelDocRef = (userId, docId) => {
   return doc(db, "users", userId, "labels", docId);
 };
 
-// export const noteDocRef = (userId, docId) => {
-//   return doc(db, "users", userId, "notes", docId);
-// };
+export const noteDocRef = (userId, docId) => {
+  return doc(db, "users", userId, "notes", docId);
+};

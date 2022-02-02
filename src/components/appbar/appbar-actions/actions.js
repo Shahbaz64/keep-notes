@@ -3,14 +3,18 @@ import { nanoid } from "nanoid";
 import PropTypes from "prop-types";
 import { Tooltip, IconButton } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import TableRowsIcon from "@mui/icons-material/TableRows";
+import SplitscreenOutlinedIcon from "@mui/icons-material/SplitscreenOutlined";
 import InvertColorsIcon from "@mui/icons-material/InvertColors";
+import GridViewIcon from "@mui/icons-material/GridView";
+import { useSelector } from "react-redux";
 
 const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
+  const toggleView = useSelector((state) => state.toggleReducer.toggleView);
+
   const actions = [
     {
-      icon: <TableRowsIcon />,
-      title: "Grid View",
+      icon: toggleView ? <SplitscreenOutlinedIcon /> : <GridViewIcon />,
+      title: toggleView ? "ListView" : "Grid View",
       handleClick: handleNotesView,
     },
     {
@@ -39,8 +43,8 @@ const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
 
 Actions.propTypes = {
   handleSignOut: PropTypes.func.isRequired,
-  handleNotesView: PropTypes.func.isRequired,
-  handleThemeMode: PropTypes.func.isRequired,
+  handleNotesView: PropTypes.func,
+  handleThemeMode: PropTypes.func,
 };
 
 export default Actions;

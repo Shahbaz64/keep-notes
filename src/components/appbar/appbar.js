@@ -11,7 +11,7 @@ import {
   IconButton,
   SvgIcon,
 } from "@mui/material";
-import { toggleDrawer } from "store";
+import { toggleDrawer, toggleView } from "store";
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
@@ -23,6 +23,10 @@ const AppBar = ({ handleSignOut }) => {
   const isSearchBar = useMediaQuery("(min-width: 600px)");
   const dispatch = useDispatch();
   const classes = useStyles();
+
+  const handleNotesView = () => {
+    dispatch(toggleView());
+  };
 
   return (
     <MuiAppBar position="fixed" elevation={0} sx={{ ...style.toolbar }}>
@@ -62,7 +66,10 @@ const AppBar = ({ handleSignOut }) => {
               </Grid>
             )}
             <Grid item>
-              <Actions handleSignOut={handleSignOut} />
+              <Actions
+                handleSignOut={handleSignOut}
+                handleNotesView={handleNotesView}
+              />
             </Grid>
           </div>
         </Grid>

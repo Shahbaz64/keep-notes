@@ -79,9 +79,9 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
 };
 
 ItemList.propTypes = {
-  handleDialog: PropTypes.func.isRequired,
-  handleoNotes: PropTypes.func.isRequired,
-  handleBinFolder: PropTypes.func.isRequired,
+  handleDialog: PropTypes.func,
+  handleoNotes: PropTypes.func,
+  handleBinFolder: PropTypes.func,
   labels: PropTypes.array,
 };
 

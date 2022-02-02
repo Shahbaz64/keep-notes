@@ -11,13 +11,12 @@ export const useStyles = makeStyles({
   actions: {
     marginLeft: "10px",
   },
-  sxProp: {
-    marginRight: "10px",
-    marginBottom: "10px",
-  },
 });
 
 export const style = {
+  header: {
+    pb: "2px",
+  },
   icons: {
     mr: "4px",
     mb: "4px",

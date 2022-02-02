@@ -4,8 +4,6 @@ import { Navigate } from "react-router-dom";
 import { useStyles } from "views/home/home.style";
 import { useSelector, useDispatch } from "react-redux";
 import { addNote, addLabel, signOutUser, showDialog } from "store";
-import Masonry from "react-masonry-css";
-import Note from "components/note/note";
 import AppBar from "components/appbar/appbar";
 import Drawer from "components/drawer/drawer";
 import SnackBar from "components/snackbar/snackBar";
@@ -13,6 +11,8 @@ import ProgressBar from "components/progress-bar/progressBar";
 import LabelDialog from "components/label-dialog/labelDialog";
 import InputBar from "components/add-note/input-bar/inputBar";
 import InputForm from "components/add-note/input-form/inputForm";
+import NotesGrid from "components/notes/notes-grid/notesGrid";
+import NotesList from "components/notes/notes-list/notesList";
 
 const Home = ({ authorized }) => {
   const classes = useStyles();
@@ -24,19 +24,11 @@ const Home = ({ authorized }) => {
   const errorMsg = useSelector((state) => state.notesReducer.errorMsg);
   const notesLoading = useSelector((state) => state.notesReducer.loading);
   const isOpenDialog = useSelector((state) => state.toggleReducer.isOpenDialog);
+  const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
   const isOpenInputBar = useSelector(
     (state) => state.toggleReducer.isOpenInputBar
   );
-
-  const breakPoint = {
-    default: 5,
-    1250: 5,
-    1100: 4,
-    900: 3,
-    700: 2,
-    450: 1,
-  };
 
   const signOutHandler = () => {
     dispatch(signOutUser());
@@ -80,20 +72,11 @@ const Home = ({ authorized }) => {
               <InputForm handleAddNote={addNotesHandler} />
             )}
             <div className={classes.allNotes}>
-              <Masonry
-                breakpointCols={breakPoint}
-                className="my-masonry-grid"
-                columnClassName="my-masonry-grid_column"
-              >
-                {notes.map((note) => (
-                  <Note
-                    key={note.id}
-                    text={note.text}
-                    color={note.color}
-                    title={note.title}
-                  />
-                ))}
-              </Masonry>
+              {toggleView ? (
+                <NotesGrid notes={notes} />
+              ) : (
+                <NotesList notes={notes} />
+              )}
               <LabelDialog
                 open={isOpenDialog}
                 labels={labels}

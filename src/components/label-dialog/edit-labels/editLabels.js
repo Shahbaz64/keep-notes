@@ -9,7 +9,7 @@ import {
   useStyles,
   style,
 } from "components/label-dialog/edit-labels/editLabel.style";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton, TextField, Tooltip } from "@mui/material";
 import { updateLabel, deleteLabel } from "store";
 
 const EditLabels = ({ labels }) => {
@@ -67,16 +67,23 @@ const EditLabels = ({ labels }) => {
         return (
           <div key={label.id}>
             {isHovered === index || isFocused === index ? (
-              <IconButton
-                onClick={() => handleDeleteLabel(index)}
-                onMouseLeave={() => setIsHovered(-1)}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+              <Tooltip title="Delete Label">
+                <IconButton
+                  onClick={() => handleDeleteLabel(index)}
+                  onMouseLeave={() => {
+                    setIsHovered(-1);
+                    setIsFocused(-1);
+                  }}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             ) : (
               <IconButton
                 onMouseEnter={() => setIsHovered(index)}
-                onMouseLeave={() => setIsHovered(-1)}
+                onMouseLeave={() => {
+                  setIsHovered(-1);
+                }}
               >
                 <LabelIcon fontSize="small" />
               </IconButton>
@@ -96,13 +103,17 @@ const EditLabels = ({ labels }) => {
               }}
             />
             {isFocused === index ? (
-              <IconButton onClick={() => handleUpdateLabel(index)}>
-                <DoneIcon fontSize="small" />
-              </IconButton>
+              <Tooltip title="Rename Label">
+                <IconButton onClick={() => handleUpdateLabel(index)}>
+                  <DoneIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             ) : (
-              <IconButton onClick={() => handleLabelFocus(index)}>
-                <EditIcon fontSize="small" />
-              </IconButton>
+              <Tooltip title="Rename Label">
+                <IconButton onClick={() => handleLabelFocus(index)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             )}
           </div>
         );
