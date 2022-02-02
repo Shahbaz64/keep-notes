@@ -9,3 +9,9 @@ export const useStyles = makeStyles({
     cursor: "text",
   },
 });
+
+export const style = {
+  card: {
+    borderRadius: "8px",
+  },
+};

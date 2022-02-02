@@ -8,4 +8,21 @@ export const useStyles = makeStyles({
   innerText: {
     wordBreak: "break-all",
   },
+  actions: {
+    marginLeft: "10px",
+  },
+  sxProp: {
+    marginRight: "10px",
+    marginBottom: "10px",
+  },
 });
+
+export const style = {
+  icons: {
+    mr: "4px",
+    mb: "4px",
+  },
+  card: {
+    borderRadius: "10px",
+  },
+};

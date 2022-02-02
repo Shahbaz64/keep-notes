@@ -30,7 +30,7 @@ const Home = ({ authorized }) => {
   );
 
   const breakPoint = {
-    default: 6,
+    default: 5,
     1250: 5,
     1100: 4,
     900: 3,
@@ -51,7 +51,6 @@ const Home = ({ authorized }) => {
   };
 
   const addLabelHandler = (label) => {
-    console.log(label);
     dispatch(addLabel({ userId, label }));
   };
 

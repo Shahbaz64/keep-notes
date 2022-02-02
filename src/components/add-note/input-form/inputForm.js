@@ -3,7 +3,10 @@ import { showInputBar } from "store";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, TextField, Button, IconButton } from "@mui/material";
-import { useStyles } from "components/add-note/input-form/inputForm.style";
+import {
+  useStyles,
+  style,
+} from "components/add-note/input-form/inputForm.style";
 import PaletteIcon from "@mui/icons-material/Palette";
 import PopOver from "components/add-note/input-form/pop-over/popOver";
 import { showPopOver, hidePopOver } from "store";
@@ -49,11 +52,7 @@ const InputForm = ({ handleAddNote }) => {
   };
 
   return (
-    <Card
-      elevation={4}
-      className={classes.addNoteCard}
-      sx={{ borderRadius: "8px" }}
-    >
+    <Card elevation={4} className={classes.addNoteCard} sx={{ ...style.card }}>
       <form
         className={classes.inputForm}
         style={{ backgroundColor: `${color}` }}
@@ -81,6 +80,11 @@ const InputForm = ({ handleAddNote }) => {
           onChange={(event) => {
             setText(event.target.value);
           }}
+          onKeyPress={(e) => {
+            if (e.key === "#") {
+              console.log(e.key);
+            }
+          }}
           InputProps={{
             disableUnderline: true,
           }}
@@ -107,10 +111,6 @@ const InputForm = ({ handleAddNote }) => {
 
 InputForm.propTypes = {
   handleAddNote: PropTypes.func.isRequired,
-};
-
-InputForm.defaultProps = {
-  handleAddNote: () => {},
 };
 
 export default InputForm;

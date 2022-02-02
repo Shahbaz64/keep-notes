@@ -34,3 +34,9 @@ export const useStyles = makeStyles((theme) => {
     },
   };
 });
+
+export const style = {
+  toolbar: {
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+  },
+};

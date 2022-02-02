@@ -23,11 +23,10 @@ const Drawer = ({ handleDialog, labels }) => {
 
 Drawer.propTypes = {
   handleDialog: PropTypes.func.isRequired,
-  labels: PropTypes.array.isRequired,
+  labels: PropTypes.array,
 };
 
 Drawer.defaultProps = {
-  handleDialog: () => {},
   labels: [],
 };
 

@@ -15,7 +15,7 @@ import { toggleDrawer } from "store";
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { useStyles } from "components/appbar/appbar.style";
+import { useStyles, style } from "components/appbar/appbar.style";
 import Actions from "components/appbar/appbar-actions/actions";
 import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
 
@@ -25,11 +25,7 @@ const AppBar = ({ handleSignOut }) => {
   const classes = useStyles();
 
   return (
-    <MuiAppBar
-      position="fixed"
-      elevation={0}
-      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-    >
+    <MuiAppBar position="fixed" elevation={0} sx={{ ...style.toolbar }}>
       <Toolbar className={classes.toolbar}>
         <Tooltip title="Main Menu">
           <IconButton
@@ -77,10 +73,6 @@ const AppBar = ({ handleSignOut }) => {
 
 AppBar.propTypes = {
   handleSignOut: PropTypes.func.isRequired,
-};
-
-AppBar.defaultProps = {
-  handleSignOut: () => {},
 };
 
 export default AppBar;

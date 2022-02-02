@@ -25,3 +25,9 @@ export const useStyles = makeStyles({
     height: "100vh",
   },
 });
+
+export const style = {
+  card: {
+    borderRadius: "8px",
+  },
+};

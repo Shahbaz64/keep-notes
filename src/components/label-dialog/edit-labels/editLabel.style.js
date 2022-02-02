@@ -5,3 +5,10 @@ export const useStyles = makeStyles({
     marginTop: "10px",
   },
 });
+
+export const style = {
+  input: {
+    marginLeft: "12px",
+    marginRight: "12px",
+  },
+};

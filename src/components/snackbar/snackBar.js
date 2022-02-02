@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { hideSnackBar } from "store";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
+import { style } from "components/snackbar/snackBar.style";
 
 const SnackBar = ({ msg }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const SnackBar = ({ msg }) => {
       <MuiSnackBar
         open={isOpenSnackBar}
         autoHideDuration={5000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ ...style.anchor }}
         message={msg}
         action={
           <IconButton
@@ -34,7 +35,7 @@ const SnackBar = ({ msg }) => {
 };
 
 SnackBar.propTypes = {
-  msg: PropTypes.string.isRequired,
+  msg: PropTypes.string,
 };
 
 SnackBar.defaultProps = {

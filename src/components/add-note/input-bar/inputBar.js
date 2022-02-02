@@ -2,7 +2,7 @@ import React from "react";
 import { Card } from "@mui/material";
 import { hideInputBar } from "store";
 import { useDispatch } from "react-redux";
-import { useStyles } from "components/add-note/input-bar/inputBar.style";
+import { useStyles, style } from "components/add-note/input-bar/inputBar.style";
 
 const InputBar = () => {
   const classes = useStyles();
@@ -13,7 +13,7 @@ const InputBar = () => {
       elevation={4}
       className={classes.inputBar}
       onClick={() => dispatch(hideInputBar())}
-      sx={{ borderRadius: "8px" }}
+      sx={{ ...style.card }}
     >
       Take a Note...
     </Card>

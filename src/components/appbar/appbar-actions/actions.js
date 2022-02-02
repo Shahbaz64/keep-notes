@@ -43,10 +43,4 @@ Actions.propTypes = {
   handleThemeMode: PropTypes.func.isRequired,
 };
 
-Actions.defaultProps = {
-  handleSignOut: () => {},
-  handleNotesView: () => {},
-  handleThemeMode: () => {},
-};
-
 export default Actions;

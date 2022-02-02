@@ -16,6 +16,7 @@ import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import EditLabels from "components/label-dialog/edit-labels/editLabels";
+import { style } from "components/label-dialog/labelDialog.style";
 
 const LabelDialog = ({ open, handleLabelAdd, labels }) => {
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const LabelDialog = ({ open, handleLabelAdd, labels }) => {
               <CloseIcon fontSize="small" />
             </IconButton>
             <TextField
-              sx={{ marginLeft: "12px", marginRight: "12px" }}
+              sx={{ ...style.input }}
               variant="standard"
               placeholder="Create new label"
               autoFocus
@@ -83,14 +84,13 @@ const LabelDialog = ({ open, handleLabelAdd, labels }) => {
 };
 
 LabelDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
+  open: PropTypes.bool,
   handleLabelAdd: PropTypes.func.isRequired,
-  labels: PropTypes.array.isRequired,
+  labels: PropTypes.array,
 };
 
 LabelDialog.defaultProps = {
   open: false,
-  handleLabelAdd: () => {},
   labels: [],
 };
 

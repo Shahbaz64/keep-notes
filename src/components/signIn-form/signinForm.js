@@ -40,8 +40,4 @@ SigninForm.propTypes = {
   handleSignIn: PropTypes.func.isRequired,
 };
 
-SigninForm.defaultProps = {
-  handleSignIn: () => {},
-};
-
 export default SigninForm;

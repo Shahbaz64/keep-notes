@@ -5,7 +5,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
 import LabelIcon from "@mui/icons-material/Label";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useStyles } from "components/label-dialog/edit-labels/editLabel.style";
+import {
+  useStyles,
+  style,
+} from "components/label-dialog/edit-labels/editLabel.style";
 import { IconButton, TextField } from "@mui/material";
 import { updateLabel, deleteLabel } from "store";
 
@@ -80,7 +83,7 @@ const EditLabels = ({ labels }) => {
             )}
 
             <TextField
-              sx={{ marginLeft: "12px", marginRight: "12px" }}
+              sx={{ ...style.input }}
               variant="standard"
               inputRef={ref}
               value={label.name}

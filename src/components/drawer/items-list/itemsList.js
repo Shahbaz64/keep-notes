@@ -82,13 +82,10 @@ ItemList.propTypes = {
   handleDialog: PropTypes.func.isRequired,
   handleoNotes: PropTypes.func.isRequired,
   handleBinFolder: PropTypes.func.isRequired,
-  labels: PropTypes.array.isRequired,
+  labels: PropTypes.array,
 };
 
 ItemList.defaultProps = {
-  handleDialog: () => {},
-  handleBinFolder: () => {},
-  handleoNotes: () => {},
   labels: [],
 };
 
