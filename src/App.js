@@ -14,7 +14,7 @@ const darkTheme = createTheme({
       main: "#FFC107",
     },
     primary: {
-      light: "rgba(241, 243, 244, 0.24)",
+      main: "rgba(241, 243, 244, 0.24)",
     },
   },
   typography: {

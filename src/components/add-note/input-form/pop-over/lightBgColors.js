@@ -1,4 +1,4 @@
-export const colors = [
+export const lightBgColors = [
   {
     color: "#F28B82",
     title: "Red",
