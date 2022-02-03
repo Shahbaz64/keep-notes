@@ -1,17 +1,9 @@
 import React from "react";
-import { nanoid } from "nanoid";
 import PropTypes from "prop-types";
-import { useStyles, style } from "./popOver.style";
-import { Box, Grid, Tooltip } from "@mui/material";
 import { Popover as MuiPopover } from "@mui/material";
-import { useSelector } from "react-redux";
-import { lightBgColors } from "components/add-note/input-form/pop-over/lightBgColors";
-import { darkBgColors } from "components/add-note/input-form/pop-over/darkBgColors";
-import InvertColorsOffOutlinedIcon from "@mui/icons-material/InvertColorsOffOutlined";
+import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 
 const PopOver = ({ open, anchor, closePopOver, getColor }) => {
-  const classes = useStyles();
-  const mode = useSelector((state) => state.toggleReducer.mode);
   return (
     <div>
       <MuiPopover
@@ -21,30 +13,7 @@ const PopOver = ({ open, anchor, closePopOver, getColor }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
       >
-        <Grid container direction="row">
-          <Tooltip title="Default">
-            <Box
-              onClick={() => getColor("#FFFFFF")}
-              className={classes.avatar}
-              sx={{ ...style.box }}
-            >
-              <InvertColorsOffOutlinedIcon fontSize="small" />
-            </Box>
-          </Tooltip>
-          {(mode ? darkBgColors : lightBgColors).map((bgColor) => {
-            return (
-              <Tooltip key={nanoid()} title={bgColor.title}>
-                <Box
-                  onClick={() => getColor(bgColor.color)}
-                  sx={{
-                    ...style.box,
-                    backgroundColor: `${bgColor.color}`,
-                  }}
-                ></Box>
-              </Tooltip>
-            );
-          })}
-        </Grid>
+        <ColorPallete getColor={getColor} />
       </MuiPopover>
     </div>
   );

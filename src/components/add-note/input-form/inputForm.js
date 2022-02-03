@@ -7,13 +7,36 @@ import {
   useStyles,
   style,
 } from "components/add-note/input-form/inputForm.style";
+import { useFormik } from "formik";
+import * as yup from "yup";
 import PaletteIcon from "@mui/icons-material/Palette";
 import PopOver from "components/add-note/input-form/pop-over/popOver";
 import { showPopOver, hidePopOver } from "store";
 
+const validationSchema = yup.object({
+  title: yup.string(),
+  text: yup.string(),
+});
+
 const InputForm = ({ handleAddNote }) => {
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      text: "",
+    },
+    onSubmit: (values) => {
+      if (!values.title || !values.text) {
+        dispatch(showInputBar());
+      } else {
+        handleAddNote(values.title, values.text, color);
+        values.title = "";
+        values.text = "";
+        dispatch(showInputBar());
+      }
+    },
+    validationSchema: validationSchema,
+  });
+
   const [color, setColor] = useState("");
   const [anchor, setAnchor] = useState(null);
   const dispatch = useDispatch();
@@ -35,51 +58,37 @@ const InputForm = ({ handleAddNote }) => {
     dispatch(hidePopOver());
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (title && text) {
-      handleAddNote(title, text, color);
-      setText("");
-      setTitle("");
-      dispatch(showInputBar());
-    } else if (!title || !text) {
-      setText("");
-      setTitle("");
-      dispatch(showInputBar());
-    } else {
-      dispatch(showInputBar());
-    }
-  };
-
   return (
     <Card elevation={4} className={classes.addNoteCard} sx={{ ...style.card }}>
       <form
         className={classes.inputForm}
-        style={{ backgroundColor: `${color}` }}
         noValidate
         autoComplete="off"
-        onSubmit={handleSubmit}
+        onSubmit={formik.handleSubmit}
+        style={{ backgroundColor: `${color}` }}
       >
         <TextField
+          name="title"
           variant="standard"
           placeholder="Title"
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-          }}
+          value={formik.values.title}
+          onChange={formik.handleChange}
           InputProps={{
             disableUnderline: true,
           }}
         />
         <TextField
+          name="text"
           autoFocus
           multiline
-          value={text}
           variant="standard"
           placeholder="Take a Note..."
-          onChange={(event) => {
-            setText(event.target.value);
-          }}
+          value={formik.values.text}
+          onChange={formik.handleChange}
+          // onBlur={formik.handleBlur}
+          // error={formik.touched.text && Boolean(formik.errors.text)}
+          // helperText={formik.touched.text && formik.errors.text}
+
           onKeyPress={(e) => {
             if (e.key === "#") {
               console.log(e.key);

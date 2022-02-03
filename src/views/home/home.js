@@ -15,7 +15,7 @@ import NotesList from "components/notes/notes-list/notesList";
 const Home = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.authReducer.user.uid);
+  const userId = useSelector((state) => state.notesReducer.userId);
   const notes = useSelector((state) => state.notesReducer.notes);
   const labels = useSelector((state) => state.notesReducer.labels);
   const isError = useSelector((state) => state.notesReducer.isError);
@@ -33,6 +33,7 @@ const Home = () => {
   };
 
   const addNotesHandler = (title, text, color) => {
+    console.log(title, text, color);
     dispatch(addNote({ userId, title, text, color }));
   };
 

@@ -105,7 +105,7 @@ export const notesSlice = createSlice({
     [addNote.rejected]: (state) => {
       state.loading = false;
       state.isError = true;
-      state.errorMsg = "ERROR adding Labels";
+      state.errorMsg = "ERROR adding Notes";
     },
   },
 
