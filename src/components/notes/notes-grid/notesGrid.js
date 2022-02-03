@@ -6,6 +6,7 @@ import {
   CardHeader,
   Typography,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { useStyles, style } from "components/notes/notes-grid/notesGrid.style";
@@ -52,15 +53,19 @@ const NotesGrid = ({ notes }) => {
               <Typography variant="body2">{note.text} </Typography>
             </CardContent>
             <div className={classes.actions}>
-              <IconButton sx={{ ...style.icons }}>
-                <PaletteOutlinedIcon fontSize="small" />
-              </IconButton>
-              <IconButton
-                sx={{ ...style.icons }}
-                onClick={() => deleteNoteHandler({ noteId: note.id })}
-              >
-                <DeleteOutlineOutlinedIcon fontSize="small" />
-              </IconButton>
+              <Tooltip title="Background Options">
+                <IconButton sx={{ ...style.icons }}>
+                  <PaletteOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Note">
+                <IconButton
+                  sx={{ ...style.icons }}
+                  onClick={() => deleteNoteHandler({ noteId: note.id })}
+                >
+                  <DeleteOutlineOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         </Card>

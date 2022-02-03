@@ -6,6 +6,7 @@ import {
   CardContent,
   Typography,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { useStyles, style } from "components/notes/notes-list/notesList.style";
@@ -39,15 +40,19 @@ const NotesList = ({ notes }) => {
             <Typography variant="body2">{note.text} </Typography>
           </CardContent>
           <div className={classes.actions}>
-            <IconButton sx={{ ...style.icons }}>
-              <PaletteOutlinedIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              sx={{ ...style.icons }}
-              onClick={() => deleteNoteHandler({ noteId: note.id })}
-            >
-              <DeleteOutlineOutlinedIcon fontSize="small" />
-            </IconButton>
+            <Tooltip title="Background Options">
+              <IconButton sx={{ ...style.icons }}>
+                <PaletteOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Note">
+              <IconButton
+                sx={{ ...style.icons }}
+                onClick={() => deleteNoteHandler({ noteId: note.id })}
+              >
+                <DeleteOutlineOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
           </div>
         </Card>
       ))}
