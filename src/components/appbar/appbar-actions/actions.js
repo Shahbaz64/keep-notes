@@ -14,8 +14,8 @@ const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
   const mode = useSelector((state) => state.toggleReducer.mode);
   const actions = [
     {
-      icon: toggleView ? <SplitscreenOutlinedIcon /> : <GridViewIcon />,
-      title: toggleView ? "ListView" : "Grid View",
+      icon: toggleView ? <GridViewIcon /> : <SplitscreenOutlinedIcon />,
+      title: toggleView ? "Grid View" : "ListView",
       handleClick: handleNotesView,
     },
     {

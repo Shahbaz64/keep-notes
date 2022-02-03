@@ -1,6 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Navigate } from "react-router-dom";
 import { useStyles } from "views/home/home.style";
 import { useSelector, useDispatch } from "react-redux";
 import { addNote, addLabel, signOutUser, showDialog } from "store";
@@ -14,7 +12,7 @@ import InputForm from "components/add-note/input-form/inputForm";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
 
-const Home = ({ authorized }) => {
+const Home = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.uid);
@@ -46,9 +44,6 @@ const Home = ({ authorized }) => {
     dispatch(addLabel({ userId, label }));
   };
 
-  if (!authorized) {
-    return <Navigate to="/" />;
-  }
   if (isError) {
     return <SnackBar msg={errorMsg} />;
   }
@@ -73,9 +68,9 @@ const Home = ({ authorized }) => {
             )}
             <div className={classes.allNotes}>
               {toggleView ? (
-                <NotesGrid notes={notes} />
-              ) : (
                 <NotesList notes={notes} />
+              ) : (
+                <NotesGrid notes={notes} />
               )}
               <LabelDialog
                 open={isOpenDialog}
@@ -88,10 +83,6 @@ const Home = ({ authorized }) => {
       )}
     </div>
   );
-};
-
-Home.propTypes = {
-  authorized: PropTypes.bool.isRequired,
 };
 
 export default Home;
