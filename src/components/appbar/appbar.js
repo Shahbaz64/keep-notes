@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   AppBar as MuiAppBar,
   Grid,
@@ -10,6 +10,7 @@ import {
   Typography,
   IconButton,
   SvgIcon,
+  Divider,
 } from "@mui/material";
 import { toggleDrawer, toggleView } from "store";
 import { useMediaQuery } from "@mui/material";
@@ -18,14 +19,20 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useStyles, style } from "components/appbar/appbar.style";
 import Actions from "components/appbar/appbar-actions/actions";
 import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
+import { toggleMode } from "store";
 
 const AppBar = ({ handleSignOut }) => {
-  const isSearchBar = useMediaQuery("(min-width: 600px)");
+  const isSearchBar = useMediaQuery("(min-width: 660px)");
   const dispatch = useDispatch();
   const classes = useStyles();
 
+  const mode = useSelector((state) => state.toggleReducer.mode);
   const handleNotesView = () => {
     dispatch(toggleView());
+  };
+
+  const handleThemeMode = () => {
+    dispatch(toggleMode());
   };
 
   return (
@@ -44,14 +51,17 @@ const AppBar = ({ handleSignOut }) => {
           </IconButton>
         </Tooltip>
         <SvgIcon fontSize="large" component={KeepIcon} inheritViewBox />
-        <Typography color="black" fontSize="large">
-          Keep
-        </Typography>
+        <Typography fontSize="large">Keep</Typography>
         <Grid container alignItems="center">
           {isSearchBar && (
             <Grid item>
               <InputBase
                 className={classes.searchInput}
+                sx={
+                  mode
+                    ? { backgroundColor: "primary.light" }
+                    : { backgroundColor: "#F1F3F4" }
+                }
                 placeholder="Search"
                 startAdornment={<SearchIcon />}
               />
@@ -69,11 +79,13 @@ const AppBar = ({ handleSignOut }) => {
               <Actions
                 handleSignOut={handleSignOut}
                 handleNotesView={handleNotesView}
+                handleThemeMode={handleThemeMode}
               />
             </Grid>
           </div>
         </Grid>
       </Toolbar>
+      <Divider />
     </MuiAppBar>
   );
 };

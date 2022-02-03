@@ -18,7 +18,7 @@ export const useStyles = makeStyles({
 
 export const style = {
   card: {
-    borderRadius: "10px",
+    borderRadius: "8px",
   },
   header: {
     pb: "2px",

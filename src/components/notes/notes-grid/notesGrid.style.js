@@ -22,6 +22,6 @@ export const style = {
     mb: "4px",
   },
   card: {
-    borderRadius: "10px",
+    borderRadius: "8px",
   },
 };

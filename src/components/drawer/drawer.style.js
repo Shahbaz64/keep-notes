@@ -6,6 +6,7 @@ export const useStyles = makeStyles({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    backgroundColor: "none",
     "& .MuiDrawer-paper": {
       marginTop: "62px",
       width: drawerWidth,
@@ -17,9 +18,6 @@ export const useStyles = makeStyles({
     "& .MuiButtonBase-root": {
       borderBottomRightRadius: "50px",
       borderTopRightRadius: "50px",
-      "&:hover": {
-        backgroundColor: "#F1F3F4",
-      },
     },
   },
 });

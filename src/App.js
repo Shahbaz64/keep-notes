@@ -1,14 +1,32 @@
 import React from "react";
-// import Home from "views/home/home";
 import { CssBaseline } from "@mui/material";
-// import SignIn from "views/signIn/signIn";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Routers from "routes";
+import { useSelector } from "react-redux";
 
-// import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
-
-const theme = createTheme({
+const darkTheme = createTheme({
   palette: {
+    mode: "dark",
+    text: {
+      secondary: "rgba(0, 0, 0, 0.6)",
+    },
+    secondary: {
+      main: "#FFC107",
+    },
+    primary: {
+      light: "rgba(241, 243, 244, 0.24)",
+    },
+  },
+  typography: {
+    button: {
+      textTransform: "none",
+    },
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
     primary: {
       main: "#fefefe",
     },
@@ -24,8 +42,9 @@ const theme = createTheme({
 });
 
 const App = () => {
+  const mode = useSelector((state) => state.toggleReducer.mode);
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={mode ? darkTheme : lightTheme}>
       <Routers />
       <CssBaseline />
     </ThemeProvider>

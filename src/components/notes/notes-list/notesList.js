@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {
-  Card,
   CardHeader,
   CardContent,
   Typography,
   IconButton,
   Tooltip,
+  Card,
 } from "@mui/material";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { useStyles, style } from "components/notes/notes-list/notesList.style";
