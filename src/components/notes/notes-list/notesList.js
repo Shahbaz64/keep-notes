@@ -11,13 +11,14 @@ import {
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import { useStyles, style } from "components/notes/notes-list/notesList.style";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { useDispatch } from "react-redux";
+import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteNote } from "store";
 
 const NotesList = ({ notes }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-
+  const mode = useSelector((state) => state.toggleReducer.mode);
   const deleteNoteHandler = (noteId) => {
     dispatch(deleteNote(noteId));
   };
@@ -28,7 +29,12 @@ const NotesList = ({ notes }) => {
         <Card
           key={note.id}
           variant="outlined"
-          sx={{ ...style.card, backgroundColor: `${note.color}` }}
+          sx={{
+            ...style.card,
+            backgroundColor: `${
+              mode ? note.color.darkColor : note.color.lightColor
+            }`,
+          }}
           className={classes.noteCard}
         >
           <CardHeader
@@ -38,6 +44,7 @@ const NotesList = ({ notes }) => {
           />
           <CardContent className={classes.innerText}>
             <Typography variant="body2">{note.text} </Typography>
+            <LabelChips chips={note.labels} />
           </CardContent>
           <div className={classes.actions}>
             <Tooltip title="Background Options">

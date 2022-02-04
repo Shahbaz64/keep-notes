@@ -17,7 +17,7 @@ export const useStyles = makeStyles({
   actions: {
     display: "flex",
     justifyContent: "space-between",
-    marginTop: "10px",
+    marginTop: "5px",
     marginRight: "0",
     marginBottom: "0",
   },

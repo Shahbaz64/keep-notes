@@ -10,8 +10,10 @@ import {
 import { useFormik } from "formik";
 import * as yup from "yup";
 import PaletteIcon from "@mui/icons-material/Palette";
-import PopOver from "components/add-note/input-form/pop-over/popOver";
-import { showPopOver, hidePopOver } from "store";
+import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
+import LabelsList from "components/add-note/input-form/labels-list/labelsList";
+import LabelChip from "components/add-note/input-form/label-chips/labelChip";
+import { removeLabelsChips } from "store";
 
 const validationSchema = yup.object({
   title: yup.string(),
@@ -27,35 +29,46 @@ const InputForm = ({ handleAddNote }) => {
     onSubmit: (values) => {
       if (!values.title || !values.text) {
         dispatch(showInputBar());
+        dispatch(removeLabelsChips());
       } else {
-        handleAddNote(values.title, values.text, color);
+        handleAddNote(values.title, values.text, color, labelsChips);
         values.title = "";
         values.text = "";
         dispatch(showInputBar());
+        dispatch(removeLabelsChips());
       }
     },
     validationSchema: validationSchema,
   });
 
-  const [color, setColor] = useState("");
-  const [anchor, setAnchor] = useState(null);
+  const [color, setColor] = useState([{ lightColor: "", darkColor: "" }]);
+  const [colorAnchor, setColorAnchor] = useState(null);
+  const [labelAnchor, setLabelAnchor] = useState(null);
   const dispatch = useDispatch();
   const classes = useStyles();
-  const isOpenPopOver = useSelector(
-    (state) => state.toggleReducer.isOpenPopOver
-  );
-  const openPopover = (event) => {
-    setAnchor(event.currentTarget);
-    dispatch(showPopOver());
+  const labels = useSelector((state) => state.notesReducer.labels);
+  const labelsChips = useSelector((state) => state.notesReducer.labelsChips);
+  const mode = useSelector((state) => state.toggleReducer.mode);
+
+  const showColorPallete = (event) => {
+    setColorAnchor(event.currentTarget);
   };
 
-  const closePopOver = () => {
-    dispatch(hidePopOver());
+  const hideColorPallete = () => {
+    setColorAnchor(null);
   };
 
-  const getColor = (color) => {
-    setColor(color);
-    dispatch(hidePopOver());
+  const showLabels = (event) => {
+    setLabelAnchor(event.currentTarget);
+  };
+
+  const hideLabels = () => {
+    setLabelAnchor(null);
+  };
+
+  const getColor = (lightColor, darkColor) => {
+    setColor({ lightColor: lightColor, darkColor: darkColor });
+    setColorAnchor(null);
   };
 
   return (
@@ -65,7 +78,9 @@ const InputForm = ({ handleAddNote }) => {
         noValidate
         autoComplete="off"
         onSubmit={formik.handleSubmit}
-        style={{ backgroundColor: `${color}` }}
+        style={{
+          backgroundColor: `${mode ? color.darkColor : color.lightColor}`,
+        }}
       >
         <TextField
           name="title"
@@ -85,21 +100,25 @@ const InputForm = ({ handleAddNote }) => {
           placeholder="Take a Note..."
           value={formik.values.text}
           onChange={formik.handleChange}
-          // onBlur={formik.handleBlur}
-          // error={formik.touched.text && Boolean(formik.errors.text)}
-          // helperText={formik.touched.text && formik.errors.text}
-
-          onKeyPress={(e) => {
-            if (e.key === "#") {
-              console.log(e.key);
+          onKeyDown={(event) => {
+            if (event.key === "#") {
+              showLabels(event);
+            } else {
+              setLabelAnchor(null);
             }
           }}
           InputProps={{
             disableUnderline: true,
           }}
         />
+        <LabelsList
+          anchor={labelAnchor}
+          hideLabels={hideLabels}
+          labels={labels}
+        />
+        <LabelChip chips={labelsChips} />
         <div className={classes.actions}>
-          <IconButton onClick={openPopover}>
+          <IconButton onClick={showColorPallete}>
             <PaletteIcon fontSize="small" />
           </IconButton>
           <Button type="submit" variant="text" color="inherit">
@@ -107,11 +126,9 @@ const InputForm = ({ handleAddNote }) => {
           </Button>
         </div>
       </form>
-      <PopOver
-        open={isOpenPopOver}
-        anchor={anchor}
-        openPopOver={openPopover}
-        closePopOver={closePopOver}
+      <ColorPallete
+        anchor={colorAnchor}
+        hideColorPallete={hideColorPallete}
         getColor={getColor}
       />
     </Card>

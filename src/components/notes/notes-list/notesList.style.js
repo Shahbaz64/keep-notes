@@ -7,6 +7,11 @@ export const useStyles = makeStyles({
     width: "45%",
     margin: "20px auto",
     marginTop: "20px",
+    "& .MuiCardContent-root": {
+      paddingBottom: "2px",
+      paddingTop: "6px",
+      marginBottom: "6px",
+    },
   },
   innerText: {
     wordBreak: "break-all",

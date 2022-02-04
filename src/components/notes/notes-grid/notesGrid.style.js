@@ -4,6 +4,11 @@ export const useStyles = makeStyles({
   noteCard: {
     marginTop: "10px",
     borderRadius: "18px",
+    "& .MuiCardContent-root": {
+      paddingBottom: "2px",
+      paddingTop: "6px",
+      marginBottom: "6px",
+    },
   },
   innerText: {
     wordBreak: "break-all",

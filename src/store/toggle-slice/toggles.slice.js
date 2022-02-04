@@ -5,7 +5,6 @@ const initialState = {
   isOpenDrawer: true,
   isOpenSnackBar: false,
   isOpenDialog: false,
-  isOpenPopOver: false,
   toggleView: false,
   mode: false,
 };
@@ -25,12 +24,6 @@ export const togglesSlice = createSlice({
     },
     hideDialog: (state) => {
       state.isOpenDialog = false;
-    },
-    showPopOver: (state) => {
-      state.isOpenPopOver = true;
-    },
-    hidePopOver: (state) => {
-      state.isOpenPopOver = false;
     },
     toggleDrawer: (state) => {
       if (state.isOpenDrawer === true) {
@@ -72,7 +65,5 @@ export const {
   hideSnackBar,
   showDialog,
   hideDialog,
-  showPopOver,
-  hidePopOver,
 } = togglesSlice.actions;
 export default togglesSlice.reducer;

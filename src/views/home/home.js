@@ -32,9 +32,8 @@ const Home = () => {
     dispatch(signOutUser());
   };
 
-  const addNotesHandler = (title, text, color) => {
-    console.log(title, text, color);
-    dispatch(addNote({ userId, title, text, color }));
+  const addNotesHandler = (title, text, color, labels) => {
+    dispatch(addNote({ userId, title, text, color, labels }));
   };
 
   const openDialogHandler = () => {

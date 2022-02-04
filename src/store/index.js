@@ -8,6 +8,8 @@ import {
   updateLabel,
   deleteLabel,
   deleteNote,
+  addLabelsChip,
+  removeLabelsChips,
 } from "store/notes-slice/notes.slice";
 import {
   showInputBar,
@@ -19,8 +21,6 @@ import {
   hideSnackBar,
   showDialog,
   hideDialog,
-  showPopOver,
-  hidePopOver,
 } from "store/toggle-slice/toggles.slice";
 
 export {
@@ -34,6 +34,8 @@ export {
   deleteLabel,
   deleteNote,
   addLabel,
+  addLabelsChip,
+  removeLabelsChips,
   showInputBar,
   hideInputBar,
   toggleDrawer,
@@ -43,6 +45,4 @@ export {
   hideSnackBar,
   showDialog,
   hideDialog,
-  showPopOver,
-  hidePopOver,
 };

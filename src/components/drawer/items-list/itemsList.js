@@ -35,46 +35,42 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
   ];
 
   return (
-    <div>
-      <List>
-        {listItems.map((item) => {
-          if (item.text === "Edit Labels") {
-            {
-              return (
-                <Fragment key={nanoid()}>
-                  {labels.map((label) => (
-                    <ListItem button key={nanoid()}>
-                      <ListItemIcon>
-                        <LabelOutlinedIcon />
-                      </ListItemIcon>
-                      <ListItemText>{label.name}</ListItemText>
-                    </ListItem>
-                  ))}
-                  <ListItem button key={nanoid()} onClick={item.handleClick}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText>{item.text}</ListItemText>
-                  </ListItem>
-                </Fragment>
-              );
-            }
-          } else {
+    <List>
+      {listItems.map((item) => {
+        if (item.text === "Edit Labels") {
+          {
             return (
-              <ListItem
-                button
-                key={nanoid()}
-                onClick={item.handleClick}
-                className={
-                  location.pathname == item.path ? classes.active : null
-                }
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText>{item.text}</ListItemText>
-              </ListItem>
+              <Fragment key={nanoid()}>
+                {labels.map((label) => (
+                  <ListItem button key={label.id}>
+                    <ListItemIcon>
+                      <LabelOutlinedIcon />
+                    </ListItemIcon>
+                    <ListItemText>{label.name}</ListItemText>
+                  </ListItem>
+                ))}
+                <ListItem button key={nanoid()} onClick={item.handleClick}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText>{item.text}</ListItemText>
+                </ListItem>
+              </Fragment>
             );
           }
-        })}
-      </List>
-    </div>
+        } else {
+          return (
+            <ListItem
+              button
+              key={nanoid()}
+              onClick={item.handleClick}
+              className={location.pathname == item.path ? classes.active : null}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText>{item.text}</ListItemText>
+            </ListItem>
+          );
+        }
+      })}
+    </List>
   );
 };
 

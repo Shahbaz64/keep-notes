@@ -33,13 +33,20 @@ export const addLabel = createAsyncThunk("addLabel", async (data) => {
 });
 
 export const addNote = createAsyncThunk("addNote", async (data) => {
-  const { userId, title, text, color } = data;
+  const { userId, title, text, color, labels } = data;
   const response = await addDoc(notesRef(userId), {
     title: title,
     text: text,
     color: color,
+    labels: labels,
   });
-  const newNote = { title: title, text: text, color: color, id: response.id };
+  const newNote = {
+    title: title,
+    text: text,
+    color: color,
+    labels: labels,
+    id: response.id,
+  };
   return newNote;
 });
 
@@ -50,6 +57,7 @@ const initialState = {
   loading: true,
   isError: false,
   errorMsg: "",
+  labelsChips: [],
 };
 
 export const notesSlice = createSlice({
@@ -110,6 +118,17 @@ export const notesSlice = createSlice({
   },
 
   reducers: {
+    addLabelsChip: (state, action) => {
+      state.labelsChips = [
+        ...state.labelsChips,
+        { id: action.payload.id, name: action.payload.name },
+      ];
+    },
+
+    removeLabelsChips: (state) => {
+      state.labelsChips = [];
+    },
+
     setUserId: (state, action) => {
       state.userId = action.payload;
     },
@@ -147,6 +166,12 @@ export const notesSlice = createSlice({
   },
 });
 
-export const { setUserId, updateLabel, deleteLabel, deleteNote } =
-  notesSlice.actions;
+export const {
+  addLabelsChip,
+  removeLabelsChips,
+  setUserId,
+  updateLabel,
+  deleteLabel,
+  deleteNote,
+} = notesSlice.actions;
 export default notesSlice.reducer;

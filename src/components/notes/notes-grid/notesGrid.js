@@ -10,14 +10,16 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { useStyles, style } from "components/notes/notes-grid/notesGrid.style";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { deleteNote } from "store";
+import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 
 const NotesGrid = ({ notes }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const mode = useSelector((state) => state.toggleReducer.mode);
 
   const deleteNoteHandler = (noteId) => {
     dispatch(deleteNote(noteId));
@@ -43,7 +45,13 @@ const NotesGrid = ({ notes }) => {
           className={classes.noteCard}
           sx={{ ...style.card }}
         >
-          <div style={{ backgroundColor: `${note.color}` }}>
+          <div
+            style={{
+              backgroundColor: `${
+                mode ? note.color.darkColor : note.color.lightColor
+              }`,
+            }}
+          >
             <CardHeader
               title={note.title}
               sx={{ ...style.header }}
@@ -51,7 +59,10 @@ const NotesGrid = ({ notes }) => {
             />
             <CardContent className={classes.innerText}>
               <Typography variant="body2">{note.text} </Typography>
+
+              <LabelChips chips={note.labels} />
             </CardContent>
+
             <div className={classes.actions}>
               <Tooltip title="Background Options">
                 <IconButton sx={{ ...style.icons }}>
