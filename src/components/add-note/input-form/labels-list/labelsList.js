@@ -28,7 +28,6 @@ const LabelsList = ({ anchor, hideLabels, addLabelChip, labels }) => {
               sx={{ ...style.listItem }}
               onClick={() => {
                 addLabelChip(label.id, label.name, label.notes);
-                console.log(label);
                 hideLabels();
               }}
             >

@@ -4,12 +4,9 @@ import PropTypes from "prop-types";
 import { Dialog } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { hideNoteDialog, updateNoteColor, deleteNote } from "store";
+import { hideNoteDialog, updateNoteColor, deleteNote, updateNote } from "store";
 import { TextField, IconButton, Button, Tooltip } from "@mui/material";
-import {
-  useStyles,
-  style,
-} from "components/notes/note-dialog/noteDialog.style";
+import { useStyles } from "components/notes/note-dialog/noteDialog.style";
 import PaletteIcon from "@mui/icons-material/Palette";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
@@ -33,12 +30,15 @@ const NoteDialog = ({ open, note }) => {
     onSubmit: (values) => {
       if (!values.title || !values.text) {
         handleClose();
-        console.log(values);
       } else {
+        dispatch(
+          updateNote({
+            noteId: note.id,
+            title: values.title,
+            text: values.text,
+          })
+        );
         handleClose();
-        values.title = "";
-        values.text = "";
-        console.log(values);
       }
     },
     validationSchema: validationSchema,
@@ -46,6 +46,8 @@ const NoteDialog = ({ open, note }) => {
 
   const handleClose = () => {
     dispatch(hideNoteDialog());
+    formik.values.title = note.title;
+    formik.values.text = note.text;
   };
 
   const showColorPallete = (event) => {
@@ -78,12 +80,13 @@ const NoteDialog = ({ open, note }) => {
         onClose={handleClose}
         fullWidth
         maxWidth="xs"
-        sx={{ borderRadius: "12px" }}
+        className={classes.dialog}
       >
         <form
+          className={classes.form}
           noValidate
           autoComplete="off"
-          className={classes.form}
+          onSubmit={formik.handleSubmit}
           style={{
             backgroundColor: `${
               mode ? note.color.darkColor : note.color.lightColor
@@ -98,7 +101,7 @@ const NoteDialog = ({ open, note }) => {
             onChange={formik.handleChange}
             InputProps={{
               disableUnderline: true,
-              style: { fontSize: 18 },
+              style: { fontSize: 18, fontWeight: "400" },
             }}
           />
           <TextField
@@ -108,38 +111,31 @@ const NoteDialog = ({ open, note }) => {
             placeholder="Take a Note..."
             value={formik.values.text}
             onChange={formik.handleChange}
-            onKeyDown={(event) => {
-              if (event.key === "#") {
-                console.log(event.key);
-                // showLabels(event);
-              } else {
-                // setLabelAnchor(null);
-              }
-            }}
             InputProps={{
               disableUnderline: true,
             }}
           />
           <div className={classes.actions}>
-            <Tooltip title="Background Options">
-              <IconButton sx={{ ...style.icons }} onClick={showColorPallete}>
-                <PaletteIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <ColorPallete
-              anchor={colorAnchor}
-              hideColorPallete={hideColorPallete}
-              getColor={updateColor}
-              noteId={note.id}
-            />
-            <Tooltip title="Delete Note">
-              <IconButton
-                sx={{ ...style.icons }}
-                onClick={() => deleteNoteHandler({ noteId: note.id })}
-              >
-                <DeleteOutlineOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
+            <div>
+              <Tooltip title="Background Options">
+                <IconButton onClick={showColorPallete}>
+                  <PaletteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <ColorPallete
+                anchor={colorAnchor}
+                hideColorPallete={hideColorPallete}
+                getColor={updateColor}
+                noteId={note.id}
+              />
+              <Tooltip title="Delete Note">
+                <IconButton
+                  onClick={() => deleteNoteHandler({ noteId: note.id })}
+                >
+                  <DeleteOutlineOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </div>
             <Button type="submit" variant="text" color="inherit">
               Close
             </Button>

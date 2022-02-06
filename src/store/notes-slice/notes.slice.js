@@ -41,7 +41,6 @@ export const addLabel = createAsyncThunk("addLabel", async (data) => {
 
 export const addNote = createAsyncThunk("addNote", async (data) => {
   const { userId, title, text, color, labels } = data;
-  console.log(labels);
   const response = await addDoc(notesRef(userId), {
     title: title,
     text: text,
@@ -49,7 +48,7 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
     labels: labels,
   });
 
-  labels.map((label) => {
+  const newLabels = labels.map((label) => {
     const newField = [
       ...label.notes,
       {
@@ -66,8 +65,8 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
       },
       { merge: true }
     );
+    return newField;
   });
-
   const newNote = {
     title: title,
     text: text,
@@ -75,7 +74,7 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
     labels: labels,
     id: response.id,
   };
-  return newNote;
+  return { newNote: newNote, newLabels: newLabels };
 });
 
 const initialState = {
@@ -135,13 +134,12 @@ export const notesSlice = createSlice({
     },
     [addNote.fulfilled]: (state, action) => {
       state.loading = false;
-      state.notes = [...state.notes, action.payload];
+      state.notes = [...state.notes, action.payload.newNote];
     },
     [addNote.rejected]: (state) => {
       state.loading = false;
       state.isError = true;
       state.errorMsg = "ERROR adding Notes";
-      console.log(state.errorMsg);
     },
   },
 
@@ -176,6 +174,21 @@ export const notesSlice = createSlice({
       });
     },
 
+    updateNote: (state, action) => {
+      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
+        title: action.payload.title,
+        text: action.payload.text,
+      });
+      state.notes = state.notes.map((note) => {
+        let newNote = { ...note };
+        if (newNote.id === action.payload.noteId) {
+          newNote.title = action.payload.title;
+          newNote.text = action.payload.text;
+        }
+        return newNote;
+      });
+    },
+
     deleteLabel: (state, action) => {
       deleteDoc(labelDocRef(state.userId, action.payload.labelId));
       state.labels.map((label, index) => {
@@ -198,6 +211,7 @@ export const notesSlice = createSlice({
 
 export const {
   updateNoteColor,
+  updateNote,
   setUserId,
   updateLabel,
   deleteLabel,

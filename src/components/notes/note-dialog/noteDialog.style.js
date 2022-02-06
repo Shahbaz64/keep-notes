@@ -14,11 +14,9 @@ export const useStyles = makeStyles({
     marginRight: "0",
     marginBottom: "0",
   },
-});
-
-export const style = {
-  icons: {
-    mr: "4px",
-    mb: "4px",
+  dialog: {
+    "& .MuiPaper-root": {
+      borderRadius: "8px",
+    },
   },
-};
+});

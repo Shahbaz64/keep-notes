@@ -8,6 +8,7 @@ import {
   updateLabel,
   deleteLabel,
   deleteNote,
+  updateNote,
   updateNoteColor,
 } from "store/notes-slice/notes.slice";
 import {
@@ -36,6 +37,7 @@ export {
   deleteNote,
   addLabel,
   updateNoteColor,
+  updateNote,
   showInputBar,
   hideInputBar,
   toggleDrawer,
