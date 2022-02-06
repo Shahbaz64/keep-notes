@@ -11,7 +11,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { hideDialog } from "store";
+import { hideLabelDialog } from "store";
 import PropTypes from "prop-types";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
@@ -23,7 +23,7 @@ const LabelDialog = ({ open, handleLabelAdd, labels }) => {
   const [label, setLabel] = useState("");
 
   const handleClose = () => {
-    dispatch(hideDialog());
+    dispatch(hideLabelDialog());
   };
 
   return (
@@ -69,9 +69,9 @@ const LabelDialog = ({ open, handleLabelAdd, labels }) => {
               if (label) {
                 handleLabelAdd(label);
                 setLabel("");
-                dispatch(hideDialog());
+                dispatch(hideLabelDialog());
               } else {
-                dispatch(hideDialog());
+                dispatch(hideLabelDialog());
               }
             }}
           >

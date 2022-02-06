@@ -11,7 +11,7 @@ import {
   style,
 } from "components/add-note/input-form/color-pallete/colorPallete.style";
 
-const ColorPallete = ({ anchor, hideColorPallete, getColor }) => {
+const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
   const classes = useStyles();
   const mode = useSelector((state) => state.toggleReducer.mode);
 
@@ -26,7 +26,7 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor }) => {
       <Grid container direction="row">
         <Tooltip title="Default">
           <Box
-            onClick={() => getColor(mode ? "#121212" : "#FFFFFF")}
+            onClick={() => getColor("#FFFFFF", "#121212", noteId)}
             className={classes.avatar}
             sx={{ ...style.box }}
           >
@@ -37,14 +37,16 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor }) => {
           return (
             <Tooltip key={nanoid()} title={bgColor.title}>
               <Box
-                onClick={() => getColor(bgColor.lightColor, bgColor.darkColor)}
+                onClick={() =>
+                  getColor(bgColor.lightColor, bgColor.darkColor, noteId)
+                }
                 sx={{
                   ...style.box,
                   backgroundColor: `${
                     mode ? bgColor.darkColor : bgColor.lightColor
                   }`,
                 }}
-              ></Box>
+              />
             </Tooltip>
           );
         })}
@@ -54,15 +56,15 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor }) => {
 };
 
 ColorPallete.propTypes = {
-  // open: PropTypes.bool,
+  noteId: PropTypes.string,
   anchor: PropTypes.object,
   hideColorPallete: PropTypes.func.isRequired,
   getColor: PropTypes.func.isRequired,
 };
 
 ColorPallete.defaultProps = {
-  // open: false,
   anchor: null,
+  noteId: "",
 };
 
 export default ColorPallete;

@@ -5,12 +5,9 @@ import {
   useStyles,
   style,
 } from "components/add-note/input-form/labels-list/labelList.style";
-import { addLabelsChip } from "store";
-import { useDispatch } from "react-redux";
 
-const LabelsList = ({ anchor, hideLabels, labels }) => {
+const LabelsList = ({ anchor, hideLabels, addLabelChip, labels }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   return (
     <Popover
@@ -30,7 +27,8 @@ const LabelsList = ({ anchor, hideLabels, labels }) => {
               key={label.id}
               sx={{ ...style.listItem }}
               onClick={() => {
-                dispatch(addLabelsChip({ id: label.id, name: label.name }));
+                addLabelChip(label.id, label.name, label.notes);
+                console.log(label);
                 hideLabels();
               }}
             >
@@ -48,6 +46,7 @@ const LabelsList = ({ anchor, hideLabels, labels }) => {
 LabelsList.propTypes = {
   anchor: PropTypes.object,
   hideLabels: PropTypes.func.isRequired,
+  addLabelChip: PropTypes.func.isRequired,
   labels: PropTypes.array,
 };
 

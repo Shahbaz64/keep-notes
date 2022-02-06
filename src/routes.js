@@ -12,6 +12,7 @@ import {
 import Home from "views/home/home";
 import SignIn from "views/signIn/signIn";
 import ProgressBar from "components/progress-bar/progressBar";
+import Bin from "views/bin/bin";
 
 const Routers = () => {
   const [user, setUser] = useState(false);
@@ -46,7 +47,12 @@ const Routers = () => {
         <Route
           exact
           path="/home"
-          element={user ? <Home authorized={user} /> : <Navigate to="/" />}
+          element={user ? <Home /> : <Navigate to="/" />}
+        />
+        <Route
+          exact
+          path="/bin"
+          element={user ? <Bin /> : <Navigate to="/" />}
         />
       </Routes>
     </Router>

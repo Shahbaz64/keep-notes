@@ -1,4 +1,10 @@
-import { deleteDoc, updateDoc, getDocs, addDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  updateDoc,
+  getDocs,
+  addDoc,
+  setDoc,
+} from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   notesRef,
@@ -27,19 +33,41 @@ export const addLabel = createAsyncThunk("addLabel", async (data) => {
   const { userId, label } = data;
   const response = await addDoc(labelsRef(userId), {
     name: label,
+    notes: [],
   });
-  const newLabel = { name: label, id: response.id };
+  const newLabel = { name: label, notes: [], id: response.id };
   return newLabel;
 });
 
 export const addNote = createAsyncThunk("addNote", async (data) => {
   const { userId, title, text, color, labels } = data;
+  console.log(labels);
   const response = await addDoc(notesRef(userId), {
     title: title,
     text: text,
     color: color,
     labels: labels,
   });
+
+  labels.map((label) => {
+    const newField = [
+      ...label.notes,
+      {
+        id: response.id,
+        title: title,
+        text: text,
+        color: color,
+      },
+    ];
+    setDoc(
+      labelDocRef(userId, label.id),
+      {
+        notes: newField,
+      },
+      { merge: true }
+    );
+  });
+
   const newNote = {
     title: title,
     text: text,
@@ -57,7 +85,6 @@ const initialState = {
   loading: true,
   isError: false,
   errorMsg: "",
-  labelsChips: [],
 };
 
 export const notesSlice = createSlice({
@@ -114,21 +141,11 @@ export const notesSlice = createSlice({
       state.loading = false;
       state.isError = true;
       state.errorMsg = "ERROR adding Notes";
+      console.log(state.errorMsg);
     },
   },
 
   reducers: {
-    addLabelsChip: (state, action) => {
-      state.labelsChips = [
-        ...state.labelsChips,
-        { id: action.payload.id, name: action.payload.name },
-      ];
-    },
-
-    removeLabelsChips: (state) => {
-      state.labelsChips = [];
-    },
-
     setUserId: (state, action) => {
       state.userId = action.payload;
     },
@@ -143,6 +160,19 @@ export const notesSlice = createSlice({
           newLabel.name = action.payload.labelName;
         }
         return newLabel;
+      });
+    },
+
+    updateNoteColor: (state, action) => {
+      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
+        color: action.payload.color,
+      });
+      state.notes = state.notes.map((note) => {
+        let newNote = { ...note };
+        if (newNote.id === action.payload.noteId) {
+          newNote.color = action.payload.color;
+        }
+        return newNote;
       });
     },
 
@@ -167,8 +197,7 @@ export const notesSlice = createSlice({
 });
 
 export const {
-  addLabelsChip,
-  removeLabelsChips,
+  updateNoteColor,
   setUserId,
   updateLabel,
   deleteLabel,

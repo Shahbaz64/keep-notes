@@ -13,7 +13,6 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 import LabelsList from "components/add-note/input-form/labels-list/labelsList";
 import LabelChip from "components/add-note/input-form/label-chips/labelChip";
-import { removeLabelsChips } from "store";
 
 const validationSchema = yup.object({
   title: yup.string(),
@@ -29,26 +28,30 @@ const InputForm = ({ handleAddNote }) => {
     onSubmit: (values) => {
       if (!values.title || !values.text) {
         dispatch(showInputBar());
-        dispatch(removeLabelsChips());
+        labelChips = [];
       } else {
-        handleAddNote(values.title, values.text, color, labelsChips);
+        handleAddNote(values.title, values.text, color, labelChips);
         values.title = "";
         values.text = "";
         dispatch(showInputBar());
-        dispatch(removeLabelsChips());
+        labelChips = [];
       }
     },
     validationSchema: validationSchema,
   });
 
+  const classes = useStyles();
+  const dispatch = useDispatch();
   const [color, setColor] = useState([{ lightColor: "", darkColor: "" }]);
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
-  const dispatch = useDispatch();
-  const classes = useStyles();
-  const labels = useSelector((state) => state.notesReducer.labels);
-  const labelsChips = useSelector((state) => state.notesReducer.labelsChips);
+  let [labelChips, setLabelChips] = useState([]);
   const mode = useSelector((state) => state.toggleReducer.mode);
+  const labels = useSelector((state) => state.notesReducer.labels);
+
+  const addLabelChip = (id, name, notes) => {
+    setLabelChips([...labelChips, { id: id, name: name, notes: notes }]);
+  };
 
   const showColorPallete = (event) => {
     setColorAnchor(event.currentTarget);
@@ -114,9 +117,10 @@ const InputForm = ({ handleAddNote }) => {
         <LabelsList
           anchor={labelAnchor}
           hideLabels={hideLabels}
+          addLabelChip={addLabelChip}
           labels={labels}
         />
-        <LabelChip chips={labelsChips} />
+        <LabelChip chips={labelChips} />
         <div className={classes.actions}>
           <IconButton onClick={showColorPallete}>
             <PaletteIcon fontSize="small" />

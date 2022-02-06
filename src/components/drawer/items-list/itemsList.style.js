@@ -1,9 +1,14 @@
-import { makeStyles } from "@mui/styles";
-
-export const useStyles = makeStyles({
-  active: {
-    "& .MuiButtonBase-root": {
-      //   backgroundColor: "#FEEFC3",
+export const style = {
+  lightActive: {
+    backgroundColor: "#FEEFC3",
+    "&: hover": {
+      backgroundColor: "#FEEFC3",
     },
   },
-});
+  darkActive: {
+    backgroundColor: "#41331C",
+    "&: hover": {
+      backgroundColor: "#41331C",
+    },
+  },
+};

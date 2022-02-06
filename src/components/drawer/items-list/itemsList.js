@@ -6,12 +6,14 @@ import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import { nanoid } from "nanoid";
-import { useStyles } from "components/drawer/items-list/itemsList.style";
-import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { style } from "components/drawer/items-list/itemsList.style";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
   const location = useLocation();
-  const classes = useStyles();
+  const navigate = useNavigate();
+  const mode = useSelector((state) => state.toggleReducer.mode);
 
   const listItems = [
     {
@@ -61,8 +63,14 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
             <ListItem
               button
               key={nanoid()}
-              onClick={item.handleClick}
-              className={location.pathname == item.path ? classes.active : null}
+              onClick={() => navigate(item.path)}
+              sx={
+                location.pathname == item.path
+                  ? mode
+                    ? { ...style.darkActive }
+                    : { ...style.lightActive }
+                  : {}
+              }
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText>{item.text}</ListItemText>

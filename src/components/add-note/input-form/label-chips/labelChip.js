@@ -10,13 +10,13 @@ const LabelChips = ({ chips }) => {
   const classes = useStyles();
 
   return (
-    <Stack direction="row" spacing={1} className={classes.labelsChips}>
+    <Stack direction="row" spacing={0.5} className={classes.labelsChips}>
       {chips.map((chip) => {
         return (
           <Chip
             key={chip.id}
+            size="small"
             label={chip.name}
-            className={classes.chip}
             sx={{ ...style.chip }}
           />
         );

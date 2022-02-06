@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   CardHeader,
@@ -18,6 +18,7 @@ import { deleteNote } from "store";
 const NotesList = ({ notes }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isHovered, setIsHovered] = useState(-1);
   const mode = useSelector((state) => state.toggleReducer.mode);
   const deleteNoteHandler = (noteId) => {
     dispatch(deleteNote(noteId));
@@ -25,17 +26,21 @@ const NotesList = ({ notes }) => {
 
   return (
     <div>
-      {notes.map((note) => (
+      {notes.map((note, index) => (
         <Card
           key={note.id}
-          variant="outlined"
+          variant={isHovered === index ? "elevation" : "outlined"}
+          className={classes.noteCard}
           sx={{
             ...style.card,
             backgroundColor: `${
               mode ? note.color.darkColor : note.color.lightColor
             }`,
           }}
-          className={classes.noteCard}
+          onMouseEnter={() => {
+            setIsHovered(index);
+          }}
+          onMouseLeave={() => setIsHovered(-1)}
         >
           <CardHeader
             title={note.title}
@@ -46,21 +51,23 @@ const NotesList = ({ notes }) => {
             <Typography variant="body2">{note.text} </Typography>
             <LabelChips chips={note.labels} />
           </CardContent>
-          <div className={classes.actions}>
-            <Tooltip title="Background Options">
-              <IconButton sx={{ ...style.icons }}>
-                <PaletteOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Note">
-              <IconButton
-                sx={{ ...style.icons }}
-                onClick={() => deleteNoteHandler({ noteId: note.id })}
-              >
-                <DeleteOutlineOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </div>
+          {isHovered === index ? (
+            <div className={classes.actions}>
+              <Tooltip title="Background Options">
+                <IconButton sx={{ ...style.icons }}>
+                  <PaletteOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Note">
+                <IconButton
+                  sx={{ ...style.icons }}
+                  onClick={() => deleteNoteHandler({ noteId: note.id })}
+                >
+                  <DeleteOutlineOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            </div>
+          ) : null}
         </Card>
       ))}
     </div>

@@ -1,16 +1,16 @@
 import React from "react";
-import { useStyles } from "views/home/home.style";
-import { useSelector, useDispatch } from "react-redux";
-import { addNote, addLabel, signOutUser, showDialog } from "store";
 import AppBar from "components/appbar/appbar";
 import Drawer from "components/drawer/drawer";
+import { useStyles } from "views/home/home.style";
 import SnackBar from "components/snackbar/snackBar";
+import { useSelector, useDispatch } from "react-redux";
 import ProgressBar from "components/progress-bar/progressBar";
 import LabelDialog from "components/label-dialog/labelDialog";
 import InputBar from "components/add-note/input-bar/inputBar";
-import InputForm from "components/add-note/input-form/inputForm";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
+import InputForm from "components/add-note/input-form/inputForm";
+import { addNote, addLabel, signOutUser, showLabelDialog } from "store";
 
 const Home = () => {
   const classes = useStyles();
@@ -21,7 +21,9 @@ const Home = () => {
   const isError = useSelector((state) => state.notesReducer.isError);
   const errorMsg = useSelector((state) => state.notesReducer.errorMsg);
   const notesLoading = useSelector((state) => state.notesReducer.loading);
-  const isOpenDialog = useSelector((state) => state.toggleReducer.isOpenDialog);
+  const isOpenLabelDialog = useSelector(
+    (state) => state.toggleReducer.isOpenLabelDialog
+  );
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
   const isOpenInputBar = useSelector(
@@ -37,7 +39,7 @@ const Home = () => {
   };
 
   const openDialogHandler = () => {
-    dispatch(showDialog());
+    dispatch(showLabelDialog());
   };
 
   const addLabelHandler = (label) => {
@@ -73,7 +75,7 @@ const Home = () => {
                 <NotesGrid notes={notes} />
               )}
               <LabelDialog
-                open={isOpenDialog}
+                open={isOpenLabelDialog}
                 labels={labels}
                 handleLabelAdd={addLabelHandler}
               />
