@@ -65,14 +65,14 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
       },
       { merge: true }
     );
-    return newField;
+    return { newField: newField, id: label.id };
   });
   const newNote = {
+    id: response.id,
     title: title,
     text: text,
     color: color,
     labels: labels,
-    id: response.id,
   };
   return { newNote: newNote, newLabels: newLabels };
 });
@@ -135,6 +135,15 @@ export const notesSlice = createSlice({
     [addNote.fulfilled]: (state, action) => {
       state.loading = false;
       state.notes = [...state.notes, action.payload.newNote];
+      state.labels = state.labels.map((label) => {
+        let newLabel = { ...label };
+        action.payload.newLabels.map((updatedLabel) => {
+          if (newLabel.id === updatedLabel.id) {
+            newLabel.notes = updatedLabel.newField;
+          }
+        });
+        return newLabel;
+      });
     },
     [addNote.rejected]: (state) => {
       state.loading = false;
