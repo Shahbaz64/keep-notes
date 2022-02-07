@@ -10,6 +10,10 @@ import {
   deleteNote,
   updateNote,
   updateNoteColor,
+  addLabelChips,
+  removeLabelChip,
+  emptyLabelChips,
+  deleteLabelsFromNote,
 } from "store/notes-slice/notes.slice";
 import {
   showInputBar,
@@ -49,4 +53,8 @@ export {
   hideLabelDialog,
   showNoteDialog,
   hideNoteDialog,
+  addLabelChips,
+  removeLabelChip,
+  emptyLabelChips,
+  deleteLabelsFromNote,
 };

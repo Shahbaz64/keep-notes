@@ -36,7 +36,12 @@ const AppBar = ({ handleSignOut }) => {
   };
 
   return (
-    <MuiAppBar position="fixed" elevation={0} sx={{ ...style.toolbar }}>
+    <MuiAppBar
+      position="fixed"
+      elevation={0}
+      className={classes.appbar}
+      sx={{ ...style.toolbar }}
+    >
       <Toolbar className={classes.toolbar}>
         <Tooltip title="Main Menu">
           <IconButton
@@ -70,7 +75,7 @@ const AppBar = ({ handleSignOut }) => {
           <div className={classes.actions}>
             {!isSearchBar && (
               <Grid item>
-                <IconButton size="large">
+                <IconButton>
                   <SearchIcon />
                 </IconButton>
               </Grid>

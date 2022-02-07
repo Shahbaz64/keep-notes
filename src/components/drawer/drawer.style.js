@@ -8,7 +8,7 @@ export const useStyles = makeStyles({
     flexShrink: 0,
     backgroundColor: "none",
     "& .MuiDrawer-paper": {
-      marginTop: "62px",
+      marginTop: "55px",
       width: drawerWidth,
       boxSizing: "border-box",
     },

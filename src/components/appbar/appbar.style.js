@@ -2,6 +2,12 @@ import { makeStyles } from "@mui/styles";
 
 export const useStyles = makeStyles((theme) => {
   return {
+    appbar: {
+      "& .MuiToolbar-root": {
+        minHeight: "60px",
+        maxHeight: "60px",
+      },
+    },
     toolbar: {
       alignItems: "center",
       backgroundColor: "text",

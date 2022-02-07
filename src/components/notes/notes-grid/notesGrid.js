@@ -13,11 +13,14 @@ import { useStyles, style } from "components/notes/notes-grid/notesGrid.style";
 import { useDispatch, useSelector } from "react-redux";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { deleteNote } from "store";
 import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
-import { updateNoteColor } from "store";
-import { showNoteDialog } from "store";
+import {
+  showNoteDialog,
+  deleteNote,
+  updateNoteColor,
+  deleteLabelsFromNote,
+} from "store";
 import NoteDialog from "components/notes/note-dialog/noteDialog";
 
 const NotesGrid = ({ notes }) => {
@@ -52,6 +55,10 @@ const NotesGrid = ({ notes }) => {
     );
   };
 
+  const removeLabelChip = (labelId, noteId) => {
+    dispatch(deleteLabelsFromNote({ labelId: labelId, noteId: noteId }));
+  };
+
   const breakPoint = {
     default: 5,
     1250: 5,
@@ -66,7 +73,7 @@ const NotesGrid = ({ notes }) => {
       className="my-masonry-grid"
       columnClassName="my-masonry-grid_column"
     >
-      {notes.map((note, index) => (
+      {notes?.map((note, index) => (
         <Card
           key={note.id}
           variant={isHovered === index ? "elevation" : "outlined"}
@@ -98,7 +105,11 @@ const NotesGrid = ({ notes }) => {
             }}
           >
             <Typography variant="body2">{note.text} </Typography>
-            <LabelChips chips={note.labels} />
+            <LabelChips
+              chips={note.labels}
+              removeLabelChip={removeLabelChip}
+              noteId={note.id}
+            />
           </CardContent>
           <div>
             {isHovered === index ? (

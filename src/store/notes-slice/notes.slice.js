@@ -45,7 +45,9 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
     title: title,
     text: text,
     color: color,
-    labels: labels,
+    labels: labels.map((label) => {
+      return { id: label.id, name: label.name };
+    }),
   });
 
   const newLabels = labels.map((label) => {
@@ -72,7 +74,9 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
     title: title,
     text: text,
     color: color,
-    labels: labels,
+    labels: labels.map((label) => {
+      return { id: label.id, name: label.name };
+    }),
   };
   return { newNote: newNote, newLabels: newLabels };
 });
@@ -84,6 +88,7 @@ const initialState = {
   loading: true,
   isError: false,
   errorMsg: "",
+  labelChips: [],
 };
 
 export const notesSlice = createSlice({
@@ -215,11 +220,44 @@ export const notesSlice = createSlice({
         }
       });
     },
+
+    addLabelChips: (state, action) => {
+      state.labelChips.push(action.payload);
+    },
+
+    emptyLabelChips: (state) => {
+      state.labelChips = [];
+    },
+
+    removeLabelChip: (state, action) => {
+      return {
+        ...state,
+        labelChips: state.labelChips.filter(
+          (label) => label.id !== action.payload
+        ),
+      };
+    },
+
+    deleteLabelsFromNote: (state, action) => {
+      state.notes.map((note) => {
+        if (note.id === action.payload.noteId) {
+          note.labels.map((label, index) => {
+            if (label.id === action.payload.labelId) {
+              return note.labels.splice(index, 1);
+            }
+          });
+        }
+      });
+    },
   },
 });
 
 export const {
   updateNoteColor,
+  addLabelChips,
+  emptyLabelChips,
+  removeLabelChip,
+  deleteLabelsFromNote,
   updateNote,
   setUserId,
   updateLabel,

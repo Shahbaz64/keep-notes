@@ -13,6 +13,7 @@ import PaletteIcon from "@mui/icons-material/Palette";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 import LabelsList from "components/add-note/input-form/labels-list/labelsList";
 import LabelChip from "components/add-note/input-form/label-chips/labelChip";
+import { addLabelChips, emptyLabelChips, removeLabelChip } from "store";
 
 const validationSchema = yup.object({
   title: yup.string(),
@@ -28,13 +29,13 @@ const InputForm = ({ handleAddNote }) => {
     onSubmit: (values) => {
       if (!values.title || !values.text) {
         dispatch(showInputBar());
-        labelChips = [];
+        dispatch(emptyLabelChips());
       } else {
         handleAddNote(values.title, values.text, color, labelChips);
         values.title = "";
         values.text = "";
         dispatch(showInputBar());
-        labelChips = [];
+        dispatch(emptyLabelChips());
       }
     },
     validationSchema: validationSchema,
@@ -45,12 +46,17 @@ const InputForm = ({ handleAddNote }) => {
   const [color, setColor] = useState([{ lightColor: "", darkColor: "" }]);
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
-  let [labelChips, setLabelChips] = useState([]);
   const mode = useSelector((state) => state.toggleReducer.mode);
   const labels = useSelector((state) => state.notesReducer.labels);
+  const labelChips = useSelector((state) => state.notesReducer.labelChips);
+  // console.log(labelChips);
 
   const addLabelChip = (id, name, notes) => {
-    setLabelChips([...labelChips, { id: id, name: name, notes: notes }]);
+    dispatch(addLabelChips({ id: id, name: name, notes: notes }));
+  };
+
+  const removeChip = (labelId) => {
+    dispatch(removeLabelChip(labelId));
   };
 
   const showColorPallete = (event) => {
@@ -120,7 +126,7 @@ const InputForm = ({ handleAddNote }) => {
           addLabelChip={addLabelChip}
           labels={labels}
         />
-        <LabelChip chips={labelChips} />
+        <LabelChip chips={labelChips} removeLabelChip={removeChip} />
         <div className={classes.actions}>
           <IconButton onClick={showColorPallete}>
             <PaletteIcon fontSize="small" />

@@ -13,6 +13,7 @@ import Home from "views/home/home";
 import SignIn from "views/signIn/signIn";
 import ProgressBar from "components/progress-bar/progressBar";
 import Bin from "views/bin/bin";
+import Layout from "Layout";
 
 const Routers = () => {
   const [user, setUser] = useState(false);
@@ -47,12 +48,28 @@ const Routers = () => {
         <Route
           exact
           path="/home"
-          element={user ? <Home /> : <Navigate to="/" />}
+          element={
+            user ? (
+              <Layout>
+                <Home />
+              </Layout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
         />
         <Route
           exact
           path="/bin"
-          element={user ? <Bin /> : <Navigate to="/" />}
+          element={
+            user ? (
+              <Layout>
+                <Bin />
+              </Layout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
         />
       </Routes>
     </Router>
