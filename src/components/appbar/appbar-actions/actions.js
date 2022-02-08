@@ -8,10 +8,9 @@ import Brightness6OutlinedIcon from "@mui/icons-material/Brightness6Outlined";
 import Brightness5OutlinedIcon from "@mui/icons-material/Brightness5Outlined";
 import GridViewIcon from "@mui/icons-material/GridView";
 import { useSelector } from "react-redux";
-import { useStyles } from "components/appbar/appbar-actions/actions.style";
+import { style } from "components/appbar/appbar-actions/actions.style";
 
 const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
-  const classes = useStyles();
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const mode = useSelector((state) => state.toggleReducer.mode);
   const actions = [
@@ -35,7 +34,7 @@ const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
     <div>
       {actions.map((icon) => (
         <Tooltip key={nanoid()} title={icon.title}>
-          <IconButton className={classes.icons} onClick={icon.handleClick}>
+          <IconButton onClick={icon.handleClick} sx={{ ...style.icons }}>
             {icon.icon}
           </IconButton>
         </Tooltip>
