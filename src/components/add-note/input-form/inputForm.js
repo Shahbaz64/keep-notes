@@ -12,12 +12,14 @@ import * as yup from "yup";
 import PaletteIcon from "@mui/icons-material/Palette";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 import LabelsList from "components/add-note/input-form/labels-list/labelsList";
-import LabelChip from "components/add-note/input-form/label-chips/labelChip";
+import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 import { addLabelChips, emptyLabelChips, removeLabelChip } from "store";
 
 const validationSchema = yup.object({
   title: yup.string(),
   text: yup.string(),
+  color: yup.object(),
+  labelChips: yup.array(),
 });
 
 const InputForm = ({ handleAddNote }) => {
@@ -25,13 +27,20 @@ const InputForm = ({ handleAddNote }) => {
     initialValues: {
       title: "",
       text: "",
+      color: { lightColor: "", darkColor: "" },
+      labelChips: [],
     },
     onSubmit: (values) => {
       if (!values.title || !values.text) {
         dispatch(showInputBar());
         dispatch(emptyLabelChips());
       } else {
-        handleAddNote(values.title, values.text, color, labelChips);
+        handleAddNote(
+          values.title,
+          values.text,
+          values.color,
+          values.labelChips
+        );
         values.title = "";
         values.text = "";
         dispatch(showInputBar());
@@ -43,19 +52,23 @@ const InputForm = ({ handleAddNote }) => {
 
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [color, setColor] = useState([{ lightColor: "", darkColor: "" }]);
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
   const mode = useSelector((state) => state.toggleReducer.mode);
   const labels = useSelector((state) => state.notesReducer.labels);
   const labelChips = useSelector((state) => state.notesReducer.labelChips);
-  // console.log(labelChips);
 
   const addLabelChip = (id, name, notes) => {
     dispatch(addLabelChips({ id: id, name: name, notes: notes }));
+    formik.values.labelChips.push({ id: id, name: name, notes: notes });
   };
 
   const removeChip = (labelId) => {
+    formik.values.labelChips.map((chip, index) => {
+      if (chip.id === labelId) {
+        return formik.values.labelChips.splice(index, 1);
+      }
+    });
     dispatch(removeLabelChip(labelId));
   };
 
@@ -76,7 +89,7 @@ const InputForm = ({ handleAddNote }) => {
   };
 
   const getColor = (lightColor, darkColor) => {
-    setColor({ lightColor: lightColor, darkColor: darkColor });
+    formik.values.color = { lightColor: lightColor, darkColor: darkColor };
     setColorAnchor(null);
   };
 
@@ -88,7 +101,11 @@ const InputForm = ({ handleAddNote }) => {
         autoComplete="off"
         onSubmit={formik.handleSubmit}
         style={{
-          backgroundColor: `${mode ? color.darkColor : color.lightColor}`,
+          backgroundColor: `${
+            mode
+              ? formik.values.color.darkColor
+              : formik.values.color.lightColor
+          }`,
         }}
       >
         <TextField
@@ -126,7 +143,7 @@ const InputForm = ({ handleAddNote }) => {
           addLabelChip={addLabelChip}
           labels={labels}
         />
-        <LabelChip chips={labelChips} removeLabelChip={removeChip} />
+        <LabelChips chips={labelChips} removeLabelChip={removeChip} />
         <div className={classes.actions}>
           <IconButton onClick={showColorPallete}>
             <PaletteIcon fontSize="small" />

@@ -11,7 +11,19 @@ import {
   labelsRef,
   labelDocRef,
   noteDocRef,
+  deletedNotesRef,
+  deletedNoteDocRef,
 } from "database/config-firebase";
+
+const initialState = {
+  userId: "",
+  notes: [],
+  labels: [],
+  deletedNotes: [],
+  loading: true,
+  labelChips: [],
+  error: { isError: false, errorMsg: "" },
+};
 
 export const getNotes = createAsyncThunk("getNotes", async (userId) => {
   const response = await getDocs(notesRef(userId));
@@ -29,13 +41,23 @@ export const getLabels = createAsyncThunk("getLabels", async (userId) => {
   return labels;
 });
 
+export const getDeletedNotes = createAsyncThunk(
+  "getDeletedNotes",
+  async (userId) => {
+    const response = await getDocs(deletedNotesRef(userId));
+    const notes = response.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id };
+    });
+    return notes;
+  }
+);
+
 export const addLabel = createAsyncThunk("addLabel", async (data) => {
   const { userId, label } = data;
   const response = await addDoc(labelsRef(userId), {
     name: label,
-    notes: [],
   });
-  const newLabel = { name: label, notes: [], id: response.id };
+  const newLabel = { name: label, id: response.id };
   return newLabel;
 });
 
@@ -50,25 +72,6 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
     }),
   });
 
-  const newLabels = labels.map((label) => {
-    const newField = [
-      ...label.notes,
-      {
-        id: response.id,
-        title: title,
-        text: text,
-        color: color,
-      },
-    ];
-    setDoc(
-      labelDocRef(userId, label.id),
-      {
-        notes: newField,
-      },
-      { merge: true }
-    );
-    return { newField: newField, id: label.id };
-  });
   const newNote = {
     id: response.id,
     title: title,
@@ -78,18 +81,8 @@ export const addNote = createAsyncThunk("addNote", async (data) => {
       return { id: label.id, name: label.name };
     }),
   };
-  return { newNote: newNote, newLabels: newLabels };
+  return newNote;
 });
-
-const initialState = {
-  userId: "",
-  notes: [],
-  labels: [],
-  loading: true,
-  isError: false,
-  errorMsg: "",
-  labelChips: [],
-};
 
 export const notesSlice = createSlice({
   name: "notes",
@@ -104,8 +97,8 @@ export const notesSlice = createSlice({
     },
     [getNotes.rejected]: (state) => {
       state.loading = false;
-      state.isError = true;
-      state.errorMsg = "ERROR getting Notes";
+      state.error.isError = true;
+      state.error.errorMsg = "ERROR getting Notes";
     },
 
     [getLabels.pending]: (state) => {
@@ -117,8 +110,21 @@ export const notesSlice = createSlice({
     },
     [getLabels.rejected]: (state) => {
       state.loading = false;
-      state.isError = true;
-      state.errorMsg = "ERROR getting Notes";
+      state.error.isError = true;
+      state.error.errorMsg = "ERROR getting Notes";
+    },
+
+    [getDeletedNotes.pending]: (state) => {
+      state.loading = true;
+    },
+    [getDeletedNotes.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.deletedNotes = action.payload;
+    },
+    [getDeletedNotes.rejected]: (state) => {
+      state.loading = false;
+      state.error.isError = true;
+      state.error.errorMsg = "ERROR getting Notes";
     },
 
     [addLabel.pending]: (state) => {
@@ -130,8 +136,8 @@ export const notesSlice = createSlice({
     },
     [addLabel.rejected]: (state) => {
       state.loading = false;
-      state.isError = true;
-      state.errorMsg = "ERROR adding Labels";
+      state.error.isError = true;
+      state.error.errorMsg = "ERROR adding Labels";
     },
 
     [addNote.pending]: (state) => {
@@ -139,21 +145,12 @@ export const notesSlice = createSlice({
     },
     [addNote.fulfilled]: (state, action) => {
       state.loading = false;
-      state.notes = [...state.notes, action.payload.newNote];
-      state.labels = state.labels.map((label) => {
-        let newLabel = { ...label };
-        action.payload.newLabels.map((updatedLabel) => {
-          if (newLabel.id === updatedLabel.id) {
-            newLabel.notes = updatedLabel.newField;
-          }
-        });
-        return newLabel;
-      });
+      state.notes = [...state.notes, action.payload];
     },
     [addNote.rejected]: (state) => {
       state.loading = false;
-      state.isError = true;
-      state.errorMsg = "ERROR adding Notes";
+      state.error.isError = true;
+      state.error.errorMsg = "ERROR adding Notes";
     },
   },
 
@@ -166,12 +163,26 @@ export const notesSlice = createSlice({
       updateDoc(labelDocRef(state.userId, action.payload.labelId), {
         name: action.payload.labelName,
       });
-      state.labels = state.labels.map((label) => {
-        let newLabel = { ...label };
-        if (newLabel.id === action.payload.labelId) {
-          newLabel.name = action.payload.labelName;
+
+      state.labels.map((label) => {
+        if (label.id === action.payload.labelId) {
+          label.name = action.payload.labelName;
         }
-        return newLabel;
+      });
+
+      state.notes.map((note) => {
+        note.labels.map((label) => {
+          if (label.id === action.payload.labelId) {
+            label.name = action.payload.labelName;
+            updateDoc(
+              noteDocRef(state.userId, note.id),
+              {
+                labels: [...note.labels],
+              },
+              { merge: true }
+            );
+          }
+        });
       });
     },
 
@@ -189,17 +200,27 @@ export const notesSlice = createSlice({
     },
 
     updateNote: (state, action) => {
-      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
+      const newNote = {
         title: action.payload.title,
         text: action.payload.text,
+        color: action.payload.color,
+        labels: action.payload.labels.map((label) => {
+          return { id: label.id, name: label.name };
+        }),
+      };
+      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
+        ...newNote,
       });
-      state.notes = state.notes.map((note) => {
-        let newNote = { ...note };
-        if (newNote.id === action.payload.noteId) {
-          newNote.title = action.payload.title;
-          newNote.text = action.payload.text;
+
+      state.notes.map((note) => {
+        if (note.id === action.payload.noteId) {
+          note.title = action.payload.title;
+          note.text = action.payload.text;
+          note.color = action.payload.color;
+          note.labels = action.payload.labels.map((label) => {
+            return { id: label.id, name: label.name };
+          });
         }
-        return newNote;
       });
     },
 
@@ -210,15 +231,39 @@ export const notesSlice = createSlice({
           return state.labels.splice(index, 1);
         }
       });
+
+      state.notes.map((note) => {
+        note.labels.map((label, index) => {
+          if (label.id === action.payload.labelId) {
+            const newLabels = note.labels.filter(
+              (label) => label.id !== action.payload.labelId
+            );
+            updateDoc(noteDocRef(state.userId, note.id), {
+              labels: newLabels,
+            });
+            return note.labels.splice(index, 1);
+          }
+        });
+      });
     },
 
     deleteNote: (state, action) => {
-      deleteDoc(noteDocRef(state.userId, action.payload.noteId));
       state.notes.map((note, index) => {
         if (note.id === action.payload.noteId) {
+          const deletedNote = {
+            title: note.title,
+            text: note.text,
+            color: note.color,
+            labels: note.labels,
+          };
+          state.deletedNotes.push({ ...deletedNote, id: note.id });
+          setDoc(deletedNoteDocRef(state.userId, note.id), {
+            ...deletedNote,
+          });
           return state.notes.splice(index, 1);
         }
       });
+      deleteDoc(noteDocRef(state.userId, action.payload.noteId));
     },
 
     addLabelChips: (state, action) => {
@@ -230,22 +275,57 @@ export const notesSlice = createSlice({
     },
 
     removeLabelChip: (state, action) => {
-      return {
-        ...state,
-        labelChips: state.labelChips.filter(
-          (label) => label.id !== action.payload
-        ),
-      };
+      state.labelChips = state.labelChips.filter(
+        (label) => label.id !== action.payload
+      );
     },
 
     deleteLabelsFromNote: (state, action) => {
       state.notes.map((note) => {
         if (note.id === action.payload.noteId) {
+          const newLabels = note.labels.filter(
+            (label) => label.id !== action.payload.labelId
+          );
           note.labels.map((label, index) => {
             if (label.id === action.payload.labelId) {
               return note.labels.splice(index, 1);
             }
           });
+          updateDoc(noteDocRef(state.userId, action.payload.noteId), {
+            labels: newLabels,
+          });
+        }
+      });
+    },
+
+    deleteAllNotes: (state) => {
+      state.deletedNotes.map((note) => {
+        deleteDoc(deletedNoteDocRef(state.userId, note.id));
+      });
+      state.deletedNotes = [];
+    },
+
+    deleteNoteForever: (state, action) => {
+      state.deletedNotes.map((note, index) => {
+        if (note.id == action.payload) {
+          return state.deletedNotes.splice(index, 1);
+        }
+      });
+      deleteDoc(deletedNoteDocRef(state.userId, action.payload));
+    },
+
+    restoreNote: (state, action) => {
+      state.deletedNotes.map((note, index) => {
+        if (note.id == action.payload.noteId) {
+          state.notes.push(note);
+          setDoc(noteDocRef(state.userId, action.payload.noteId), {
+            title: note.title,
+            text: note.text,
+            color: note.color,
+            labels: note.labels,
+          });
+          deleteDoc(deletedNoteDocRef(state.userId, action.payload.noteId));
+          return state.deletedNotes.splice(index, 1);
         }
       });
     },
@@ -258,10 +338,14 @@ export const {
   emptyLabelChips,
   removeLabelChip,
   deleteLabelsFromNote,
+  deleteNoteFromLabels,
   updateNote,
   setUserId,
   updateLabel,
   deleteLabel,
   deleteNote,
+  deleteAllNotes,
+  deleteNoteForever,
+  restoreNote,
 } = notesSlice.actions;
 export default notesSlice.reducer;

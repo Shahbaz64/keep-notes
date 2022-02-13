@@ -44,7 +44,20 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
             return (
               <Fragment key={nanoid()}>
                 {labels.map((label) => (
-                  <ListItem button key={label.id}>
+                  <ListItem
+                    button
+                    key={label.id}
+                    onClick={() => {
+                      navigate(`/labels/${label.name}`);
+                    }}
+                    sx={
+                      location.pathname === `/labels/${label.name}`
+                        ? mode
+                          ? { ...style.darkActive }
+                          : { ...style.lightActive }
+                        : {}
+                    }
+                  >
                     <ListItemIcon>
                       <LabelOutlinedIcon />
                     </ListItemIcon>
@@ -65,7 +78,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
               key={nanoid()}
               onClick={() => navigate(item.path)}
               sx={
-                location.pathname == item.path
+                location.pathname === item.path
                   ? mode
                     ? { ...style.darkActive }
                     : { ...style.lightActive }

@@ -1,12 +1,11 @@
 import React from "react";
+import { showSnackBar } from "store";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { auth } from "database/config-firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import SigninForm from "components/signIn-form/signinForm";
 import SnackBar from "components/snackbar/snackBar";
-import { signInUser, showSnackBar } from "store";
-import { setUserId } from "store/notes-slice/notes.slice";
+import SigninForm from "components/signIn-form/signinForm";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const SignInPage = () => {
   const dispatch = useDispatch();
@@ -15,17 +14,7 @@ const SignInPage = () => {
   const signInHandler = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      const res = await signInWithPopup(auth, provider);
-      dispatch(
-        signInUser({
-          uid: res.user.uid,
-          email: res.user.email,
-          displayName: res.user.displayName,
-          photoURL: res.user.photoURL,
-        })
-      );
-      dispatch(setUserId(res.user.uid));
-      navigate("/home");
+      signInWithPopup(auth, provider).then(navigate("/home"));
     } catch {
       dispatch(showSnackBar());
     }

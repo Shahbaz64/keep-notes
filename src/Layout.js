@@ -9,7 +9,7 @@ import LabelDialog from "components/label-dialog/labelDialog";
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const labels = useSelector((state) => state.notesReducer.labels);
-  const userId = useSelector((state) => state.notesReducer.userId);
+  const userId = useSelector((state) => state.authReducer.user.userId);
   const isOpenLabelDialog = useSelector(
     (state) => state.toggleReducer.isOpenLabelDialog
   );

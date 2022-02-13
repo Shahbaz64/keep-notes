@@ -69,7 +69,9 @@ const EditLabels = ({ labels }) => {
             {isHovered === index || isFocused === index ? (
               <Tooltip title="Delete Label">
                 <IconButton
-                  onClick={() => handleDeleteLabel(index)}
+                  onClick={() => {
+                    handleDeleteLabel(index);
+                  }}
                   onMouseLeave={() => {
                     setIsHovered(-1);
                     setIsFocused(-1);
