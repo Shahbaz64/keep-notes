@@ -1,4 +1,8 @@
-import { signInUser, signOutUser } from "store/auth-slice/auth.slice";
+import {
+  signInUser,
+  signOutUser,
+  toggleLoading,
+} from "store/auth-slice/auth.slice";
 import {
   setUserId,
   addNote,
@@ -14,6 +18,11 @@ import {
   removeLabelChip,
   emptyLabelChips,
   deleteLabelsFromNote,
+  deleteNoteFromLabels,
+  getDeletedNotes,
+  deleteAllNotes,
+  deleteNoteForever,
+  restoreNote,
 } from "store/notes-slice/notes.slice";
 import {
   showInputBar,
@@ -27,11 +36,14 @@ import {
   hideLabelDialog,
   showNoteDialog,
   hideNoteDialog,
+  showDeleteDialog,
+  hideDeleteDialog,
 } from "store/toggle-slice/toggles.slice";
 
 export {
   signInUser,
   signOutUser,
+  toggleLoading,
   setUserId,
   addNote,
   getNotes,
@@ -53,8 +65,15 @@ export {
   hideLabelDialog,
   showNoteDialog,
   hideNoteDialog,
+  showDeleteDialog,
+  hideDeleteDialog,
   addLabelChips,
   removeLabelChip,
   emptyLabelChips,
   deleteLabelsFromNote,
+  deleteNoteFromLabels,
+  getDeletedNotes,
+  deleteAllNotes,
+  deleteNoteForever,
+  restoreNote,
 };

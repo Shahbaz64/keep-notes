@@ -1,41 +1,56 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "database/config-firebase";
-import { setUserId, getNotes, getLabels } from "store";
+import {
+  signInUser,
+  toggleLoading,
+  setUserId,
+  getNotes,
+  getLabels,
+} from "store";
 import {
   Routes,
   BrowserRouter as Router,
   Route,
   Navigate,
 } from "react-router-dom";
+import Layout from "Layout";
+import Bin from "views/bin/bin";
 import Home from "views/home/home";
 import SignIn from "views/signIn/signIn";
+import React, { useEffect } from "react";
+import { auth } from "database/config-firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
 import ProgressBar from "components/progress-bar/progressBar";
-import Bin from "views/bin/bin";
-import Layout from "Layout";
+import Label from "views/labels/Label";
+import { getDeletedNotes } from "store";
 
 const Routers = () => {
-  const [user, setUser] = useState(false);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.authReducer.user.userId);
+  const isLoading = useSelector((state) => state.authReducer.isLoading);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(true);
-        setLoading(false);
+        dispatch(
+          signInUser({
+            userId: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          })
+        );
         dispatch(setUserId(user.uid));
-        dispatch(getNotes(user.uid));
         dispatch(getLabels(user.uid));
+        dispatch(getNotes(user.uid));
+        dispatch(getDeletedNotes(user.uid));
+        dispatch(toggleLoading(false));
       } else {
-        setUser(false);
-        setLoading(false);
+        dispatch(toggleLoading(false));
       }
     });
   }, []);
 
-  return loading ? (
+  return isLoading ? (
     <ProgressBar />
   ) : (
     <Router>
@@ -43,13 +58,13 @@ const Routers = () => {
         <Route
           exact
           path="/"
-          element={!user ? <SignIn /> : <Navigate to="/home" />}
+          element={!userId ? <SignIn /> : <Navigate to="/home" />}
         />
         <Route
           exact
           path="/home"
           element={
-            user ? (
+            userId ? (
               <Layout>
                 <Home />
               </Layout>
@@ -62,9 +77,21 @@ const Routers = () => {
           exact
           path="/bin"
           element={
-            user ? (
+            userId ? (
               <Layout>
                 <Bin />
+              </Layout>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/labels/:labelName"
+          element={
+            userId ? (
+              <Layout>
+                <Label />
               </Layout>
             ) : (
               <Navigate to="/" />

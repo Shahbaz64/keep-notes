@@ -27,10 +27,18 @@ export const labelsRef = (userId) => {
   return collection(db, "users", userId, "labels");
 };
 
+export const deletedNotesRef = (userId) => {
+  return collection(db, "users", userId, "deletedNotes");
+};
+
 export const labelDocRef = (userId, docId) => {
   return doc(db, "users", userId, "labels", docId);
 };
 
 export const noteDocRef = (userId, docId) => {
   return doc(db, "users", userId, "notes", docId);
+};
+
+export const deletedNoteDocRef = (userId, docId) => {
+  return doc(db, "users", userId, "deletedNotes", docId);
 };

@@ -6,6 +6,7 @@ const initialState = {
   isOpenSnackBar: false,
   isOpenLabelDialog: false,
   isOpenNoteDialog: false,
+  isOpenDeleteDialog: false,
   toggleView: false,
   mode: false,
 };
@@ -31,6 +32,12 @@ export const togglesSlice = createSlice({
     },
     hideNoteDialog: (state) => {
       state.isOpenNoteDialog = false;
+    },
+    showDeleteDialog: (state) => {
+      state.isOpenDeleteDialog = true;
+    },
+    hideDeleteDialog: (state) => {
+      state.isOpenDeleteDialog = false;
     },
     toggleDrawer: (state) => {
       if (state.isOpenDrawer === true) {
@@ -74,5 +81,7 @@ export const {
   hideLabelDialog,
   showNoteDialog,
   hideNoteDialog,
+  showDeleteDialog,
+  hideDeleteDialog,
 } = togglesSlice.actions;
 export default togglesSlice.reducer;

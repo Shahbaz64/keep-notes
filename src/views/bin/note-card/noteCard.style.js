@@ -15,15 +15,13 @@ export const useStyles = makeStyles({
   },
   actions: {
     marginLeft: "10px",
+    marginBottom: "4px",
   },
 });
 
 export const style = {
   header: {
     pb: "2px",
-  },
-  icons: {
-    mb: "4px",
   },
   card: {
     borderRadius: "8px",

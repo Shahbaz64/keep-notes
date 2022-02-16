@@ -3,17 +3,21 @@ import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Dialog } from "@mui/material";
 import React, { useState } from "react";
+import { hideNoteDialog, deleteNote, updateNote } from "store";
+import PaletteIcon from "@mui/icons-material/Palette";
 import { useDispatch, useSelector } from "react-redux";
-import { hideNoteDialog, updateNoteColor, deleteNote, updateNote } from "store";
 import { TextField, IconButton, Button, Tooltip } from "@mui/material";
 import { useStyles } from "components/notes/note-dialog/noteDialog.style";
-import PaletteIcon from "@mui/icons-material/Palette";
+import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import LabelsList from "components/add-note/input-form/labels-list/labelsList";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 
 const validationSchema = yup.object({
   title: yup.string(),
   text: yup.string(),
+  color: yup.object(),
+  labels: yup.array(),
 });
 
 const NoteDialog = ({ open, note }) => {
@@ -21,11 +25,19 @@ const NoteDialog = ({ open, note }) => {
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.toggleReducer.mode);
   const [colorAnchor, setColorAnchor] = useState(null);
+  const [labelAnchor, setLabelAnchor] = useState(null);
+  const labels = useSelector((state) => state.notesReducer.labels);
+  const [labelChips, setLabelChips] = useState(note.labels);
 
   const formik = useFormik({
     initialValues: {
       title: note.title,
       text: note.text,
+      color: {
+        lightColor: note.color.lightColor,
+        darkColor: note.color.darkColor,
+      },
+      labelChips: labelChips,
     },
     onSubmit: (values) => {
       if (!values.title || !values.text) {
@@ -36,6 +48,8 @@ const NoteDialog = ({ open, note }) => {
             noteId: note.id,
             title: values.title,
             text: values.text,
+            color: values.color,
+            labels: values.labelChips,
           })
         );
         handleClose();
@@ -43,6 +57,28 @@ const NoteDialog = ({ open, note }) => {
     },
     validationSchema: validationSchema,
   });
+
+  const removeChip = (labelId) => {
+    formik.values.labelChips = formik.values.labelChips.filter(
+      (label) => label.id !== labelId
+    );
+    setLabelChips(formik.values.labelChips);
+  };
+
+  const addLabelChip = (id, name, notes) => {
+    formik.values.labelChips = [
+      ...formik.values.labelChips,
+      { id: id, name: name, notes: notes },
+    ];
+  };
+
+  const showLabels = (event) => {
+    setLabelAnchor(event.currentTarget);
+  };
+
+  const hideLabels = () => {
+    setLabelAnchor(null);
+  };
 
   const handleClose = () => {
     dispatch(hideNoteDialog());
@@ -58,14 +94,9 @@ const NoteDialog = ({ open, note }) => {
     setColorAnchor(null);
   };
 
-  const updateColor = (lightColor, darkColor, noteId) => {
+  const getColor = (lightColor, darkColor) => {
+    formik.values.color = { lightColor: lightColor, darkColor: darkColor };
     setColorAnchor(null);
-    dispatch(
-      updateNoteColor({
-        noteId: noteId,
-        color: { lightColor: lightColor, darkColor: darkColor },
-      })
-    );
   };
 
   const deleteNoteHandler = (noteId) => {
@@ -89,7 +120,9 @@ const NoteDialog = ({ open, note }) => {
           onSubmit={formik.handleSubmit}
           style={{
             backgroundColor: `${
-              mode ? note.color.darkColor : note.color.lightColor
+              mode
+                ? formik.values.color.darkColor
+                : formik.values.color.lightColor
             }`,
           }}
         >
@@ -114,6 +147,23 @@ const NoteDialog = ({ open, note }) => {
             InputProps={{
               disableUnderline: true,
             }}
+            onKeyDown={(event) => {
+              if (event.key === "#") {
+                showLabels(event);
+              } else {
+                setLabelAnchor(null);
+              }
+            }}
+          />
+          <LabelsList
+            anchor={labelAnchor}
+            hideLabels={hideLabels}
+            addLabelChip={addLabelChip}
+            labels={labels}
+          />
+          <LabelChips
+            chips={formik.values.labelChips}
+            removeLabelChip={removeChip}
           />
           <div className={classes.actions}>
             <div>
@@ -125,7 +175,7 @@ const NoteDialog = ({ open, note }) => {
               <ColorPallete
                 anchor={colorAnchor}
                 hideColorPallete={hideColorPallete}
-                getColor={updateColor}
+                getColor={getColor}
                 noteId={note.id}
               />
               <Tooltip title="Delete Note">
