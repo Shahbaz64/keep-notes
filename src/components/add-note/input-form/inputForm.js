@@ -2,50 +2,39 @@ import PropTypes from "prop-types";
 import { showInputBar } from "store";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, TextField, Button, IconButton } from "@mui/material";
+import { Card, Button, IconButton, TextField } from "@mui/material";
 import {
   useStyles,
   style,
 } from "components/add-note/input-form/inputForm.style";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import PaletteIcon from "@mui/icons-material/Palette";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
 import LabelsList from "components/add-note/input-form/labels-list/labelsList";
 import LabelChips from "components/add-note/input-form/label-chips/labelChip";
-import { addLabelChips, emptyLabelChips, removeLabelChip } from "store";
-
-const validationSchema = yup.object({
-  title: yup.string(),
-  text: yup.string(),
-  color: yup.object(),
-  labelChips: yup.array(),
-});
+import { validationSchema } from "utils/schema/schema";
 
 const InputForm = ({ handleAddNote }) => {
+  const initialValues = {
+    title: "",
+    text: "",
+    color: { lightColor: "", darkColor: "" },
+    labelChips: [],
+    isDeleted: false,
+  };
   const formik = useFormik({
-    initialValues: {
-      title: "",
-      text: "",
-      color: { lightColor: "", darkColor: "" },
-      labelChips: [],
-    },
+    initialValues: initialValues,
     onSubmit: (values) => {
-      if (!values.title || !values.text) {
-        dispatch(showInputBar());
-        dispatch(emptyLabelChips());
-      } else {
-        handleAddNote(
-          values.title,
-          values.text,
-          values.color,
-          values.labelChips
-        );
-        values.title = "";
-        values.text = "";
-        dispatch(showInputBar());
-        dispatch(emptyLabelChips());
-      }
+      handleAddNote(
+        values.title,
+        values.text,
+        values.color,
+        values.isDeleted,
+        values.labelChips
+      );
+      values.title = "";
+      values.text = "";
+      dispatch(showInputBar());
     },
     validationSchema: validationSchema,
   });
@@ -54,13 +43,16 @@ const InputForm = ({ handleAddNote }) => {
   const dispatch = useDispatch();
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
+  const [labelChips, setLabelChips] = useState([]);
+  const [labelTerm, setLabelTerm] = useState("");
   const mode = useSelector((state) => state.toggleReducer.mode);
   const labels = useSelector((state) => state.notesReducer.labels);
-  const labelChips = useSelector((state) => state.notesReducer.labelChips);
 
-  const addLabelChip = (id, name, notes) => {
-    dispatch(addLabelChips({ id: id, name: name, notes: notes }));
-    formik.values.labelChips.push({ id: id, name: name, notes: notes });
+  const addLabelChip = (id, name) => {
+    setLabelChips((prevLabelChips) => {
+      return [...prevLabelChips, { id: id, name: name }];
+    });
+    formik.values.labelChips.push({ id: id, name: name });
   };
 
   const removeChip = (labelId) => {
@@ -69,7 +61,10 @@ const InputForm = ({ handleAddNote }) => {
         return formik.values.labelChips.splice(index, 1);
       }
     });
-    dispatch(removeLabelChip(labelId));
+    setLabelChips((prevLabelChips) => {
+      const newLabels = prevLabelChips.filter((chip) => chip.id !== labelId);
+      return newLabels;
+    });
   };
 
   const showColorPallete = (event) => {
@@ -93,6 +88,16 @@ const InputForm = ({ handleAddNote }) => {
     setColorAnchor(null);
   };
 
+  const handleKeyUp = (e) => {
+    const label = e.target.value.substring(e.target.value.lastIndexOf("#") + 1);
+    setLabelTerm(label);
+    if (e.key === "#") {
+      showLabels(e);
+    } else if (e.key === " ") {
+      setLabelAnchor(null);
+    }
+  };
+
   return (
     <Card elevation={4} className={classes.addNoteCard} sx={{ ...style.card }}>
       <form
@@ -114,6 +119,9 @@ const InputForm = ({ handleAddNote }) => {
           placeholder="Title"
           value={formik.values.title}
           onChange={formik.handleChange}
+          error={formik.touched.title && Boolean(formik.errors.title)}
+          helperText={formik.touched.title && formik.errors.title}
+          onBlur={formik.handleBlur}
           InputProps={{
             disableUnderline: true,
           }}
@@ -123,16 +131,13 @@ const InputForm = ({ handleAddNote }) => {
           autoFocus
           multiline
           variant="standard"
-          placeholder="Take a Note..."
+          placeholder="Take a note..."
           value={formik.values.text}
           onChange={formik.handleChange}
-          onKeyDown={(event) => {
-            if (event.key === "#") {
-              showLabels(event);
-            } else {
-              setLabelAnchor(null);
-            }
-          }}
+          onKeyUp={handleKeyUp}
+          error={formik.touched.text && Boolean(formik.errors.text)}
+          helperText={formik.touched.text && formik.errors.text}
+          onBlur={formik.handleBlur}
           InputProps={{
             disableUnderline: true,
           }}
@@ -142,6 +147,7 @@ const InputForm = ({ handleAddNote }) => {
           hideLabels={hideLabels}
           addLabelChip={addLabelChip}
           labels={labels}
+          labelTerm={labelTerm}
         />
         <LabelChips chips={labelChips} removeLabelChip={removeChip} />
         <div className={classes.actions}>
@@ -152,18 +158,19 @@ const InputForm = ({ handleAddNote }) => {
             Close
           </Button>
         </div>
+        <ColorPallete
+          anchor={colorAnchor}
+          hideColorPallete={hideColorPallete}
+          getColor={getColor}
+        />
       </form>
-      <ColorPallete
-        anchor={colorAnchor}
-        hideColorPallete={hideColorPallete}
-        getColor={getColor}
-      />
     </Card>
   );
 };
 
 InputForm.propTypes = {
   handleAddNote: PropTypes.func.isRequired,
+  handleBlur: PropTypes.func,
 };
 
 export default InputForm;

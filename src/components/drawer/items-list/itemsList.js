@@ -9,6 +9,7 @@ import { nanoid } from "nanoid";
 import { useSelector } from "react-redux";
 import { style } from "components/drawer/items-list/itemsList.style";
 import { useLocation, useNavigate } from "react-router-dom";
+import path from "utils/constants/path.constant";
 
 const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
     {
       icon: <LightbulbOutlinedIcon />,
       text: "Notes",
-      path: "/home",
+      path: path.HOME,
       handleClick: handleoNotes,
     },
     {
@@ -31,7 +32,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
     {
       icon: <DeleteOutlinedIcon />,
       text: "Bin",
-      path: "/bin",
+      path: path.BIN,
       handleClick: handleBinFolder,
     },
   ];
@@ -48,10 +49,10 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
                     button
                     key={label.id}
                     onClick={() => {
-                      navigate(`/labels/${label.name}`);
+                      navigate(`${path.LABELS}/${label.name}`);
                     }}
                     sx={
-                      location.pathname === `/labels/${label.name}`
+                      location.pathname === `${path.LABELS}/${label.name}`
                         ? mode
                           ? { ...style.darkActive }
                           : { ...style.lightActive }

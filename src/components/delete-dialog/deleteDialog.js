@@ -6,16 +6,28 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { deleteAllNotes, hideDeleteDialog } from "store";
+import HELPER from "utils/helpers/notes.helper";
+import { useDispatch, useSelector } from "react-redux";
+import { hideDeleteDialog } from "store";
 import PropTypes from "prop-types";
 import { style } from "components/delete-dialog/deleteDialog.style";
 
 const DeleteDialog = ({ open, title, btnText }) => {
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.authReducer.user.userId);
+  const notes = useSelector((state) => state.notesReducer.notes);
 
   const handleClose = () => {
     dispatch(hideDeleteDialog());
+  };
+
+  const handleDeleteAllNotes = () => {
+    notes.map((note) => {
+      if (note.isDeleted === true) {
+        HELPER.DELETEALLNOTES(userId, note.id);
+      }
+    });
+    handleClose();
   };
 
   return (
@@ -31,10 +43,7 @@ const DeleteDialog = ({ open, title, btnText }) => {
           <Button
             color="inherit"
             sx={{ ...style.btn }}
-            onClick={() => {
-              dispatch(deleteAllNotes());
-              handleClose();
-            }}
+            onClick={handleDeleteAllNotes}
           >
             {btnText}
           </Button>

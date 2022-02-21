@@ -42,4 +42,10 @@ export const style = {
   toolbar: {
     zIndex: (theme) => theme.zIndex.drawer + 1,
   },
+  lightColor: {
+    backgroundColor: "#F1F3F4",
+  },
+  darkColor: {
+    backgroundColor: "#292929",
+  },
 };

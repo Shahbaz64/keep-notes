@@ -12,6 +12,7 @@ const darkTheme = createTheme({
     },
     secondary: {
       main: "#FFC107",
+      light: "#41331C",
     },
     primary: {
       main: "rgba(241, 243, 244, 0.24)",
@@ -21,6 +22,7 @@ const darkTheme = createTheme({
     button: {
       textTransform: "none",
     },
+    fontFamily: ["Google Sans", "Open Sans"].join(","),
   },
 });
 
@@ -32,19 +34,21 @@ const lightTheme = createTheme({
     },
     secondary: {
       main: "#FFC107",
+      light: "#FEEFC3",
     },
   },
   typography: {
     button: {
       textTransform: "none",
     },
+    fontFamily: ["Google Sans", "Open Sans"].join(","),
   },
 });
 
 const App = () => {
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const theme = useSelector((state) => state.toggleReducer.mode);
   return (
-    <ThemeProvider theme={mode ? darkTheme : lightTheme}>
+    <ThemeProvider theme={theme ? darkTheme : lightTheme}>
       <Routers />
       <CssBaseline />
     </ThemeProvider>

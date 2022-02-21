@@ -12,21 +12,24 @@ import {
   SvgIcon,
   Divider,
 } from "@mui/material";
-import { toggleDrawer, toggleView } from "store";
+import { toggleDrawer, toggleView, toggleMode } from "store";
+import { setSearchTerm } from "store";
 import { useMediaQuery } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { useStyles, style } from "components/appbar/appbar.style";
 import Actions from "components/appbar/appbar-actions/actions";
+import { useStyles, style } from "components/appbar/appbar.style";
 import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
-import { toggleMode } from "store";
+import path from "utils/constants/path.constant";
 
 const AppBar = ({ handleSignOut }) => {
   const isSearchBar = useMediaQuery("(min-width: 660px)");
   const dispatch = useDispatch();
   const classes = useStyles();
-
+  const navigate = useNavigate();
   const mode = useSelector((state) => state.toggleReducer.mode);
+
   const handleNotesView = () => {
     dispatch(toggleView());
   };
@@ -61,14 +64,14 @@ const AppBar = ({ handleSignOut }) => {
           {isSearchBar && (
             <Grid item>
               <InputBase
-                className={classes.searchInput}
-                sx={
-                  mode
-                    ? { backgroundColor: "primary.light" }
-                    : { backgroundColor: "#F1F3F4" }
-                }
-                placeholder="Search"
                 startAdornment={<SearchIcon />}
+                placeholder="Search"
+                className={classes.searchInput}
+                onChange={(e) => {
+                  dispatch(setSearchTerm(e.target.value));
+                }}
+                onFocus={() => navigate(path.SEARCH)}
+                sx={mode ? { ...style.darkColor } : { ...style.lightColor }}
               />
             </Grid>
           )}

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Masonry from "react-masonry-css";
-import NoteCard from "../note-card/noteCard";
+import NoteCard from "components/notes/note-card/noteCard";
 
 const NotesGrid = ({ notes }) => {
   const breakPoint = {
@@ -18,9 +18,9 @@ const NotesGrid = ({ notes }) => {
       className="my-masonry-grid"
       columnClassName="my-masonry-grid_column"
     >
-      {notes?.map((note, index) => (
-        <NoteCard key={note.id} note={note} index={index} />
-      ))}
+      {notes?.map((note, index) => {
+        return <NoteCard key={note.id} note={note} index={index} />;
+      })}
     </Masonry>
   );
 };

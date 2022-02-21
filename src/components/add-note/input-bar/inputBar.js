@@ -15,7 +15,7 @@ const InputBar = () => {
       onClick={() => dispatch(hideInputBar())}
       sx={{ ...style.card }}
     >
-      Take a Note...
+      Take a note...
     </Card>
   );
 };

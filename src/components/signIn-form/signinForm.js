@@ -1,9 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
+import keepImg from "assets/keep-notes.png";
 import { Card, Avatar, Typography, Button } from "@mui/material";
 import { useStyles } from "components/signIn-form/signinForm.style";
 import { ReactComponent as GoogleIcon } from "assets/google-icon.svg";
-import keepImg from "assets/keep-notes.png";
-import PropTypes from "prop-types";
+// import { ReactComponent as LabelIcon } from "assets/label-icon.svg";
 
 const SigninForm = ({ handleSignIn }) => {
   const classes = useStyles();

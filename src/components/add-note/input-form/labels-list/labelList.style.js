@@ -12,6 +12,10 @@ export const style = {
     padding: "4px 0px",
   },
   listItem: {
-    padding: "1px 8px",
+    padding: "0px 8px",
+    marginTop: "2px",
+  },
+  itemText: {
+    marginLeft: "10px",
   },
 };

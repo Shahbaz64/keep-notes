@@ -19,6 +19,7 @@ const SnackBar = ({ msg }) => {
         autoHideDuration={5000}
         anchorOrigin={{ ...style.anchor }}
         message={msg}
+        onClose={() => dispatch(hideSnackBar())}
         action={
           <IconButton
             size="small"

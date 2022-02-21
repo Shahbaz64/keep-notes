@@ -8,19 +8,32 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { useStyles, style } from "views/bin/note-card/noteCard.style";
-import { useSelector, useDispatch } from "react-redux";
-import { deleteNoteForever } from "store";
-import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import { useSelector } from "react-redux";
+import HELPER from "utils/helpers/notes.helper";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { useStyles, style } from "views/bin/note-card/noteCard.style";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
-import { restoreNote } from "store";
+import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 
 const NoteCard = ({ note, index }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [isHovered, setIsHovered] = useState(-1);
   const mode = useSelector((state) => state.toggleReducer.mode);
+  const userId = useSelector((state) => state.authReducer.user.userId);
+  const notes = useSelector((state) => state.notesReducer.notes);
+
+  const handleDeleteNoteForever = (noteId) => {
+    HELPER.DELETENOTEFOREVER(userId, noteId);
+  };
+
+  const handleRestoreNote = (noteId) => {
+    notes.map((note) => {
+      if (note.id === noteId) {
+        HELPER.RESTORENOTE(userId, noteId);
+      }
+    });
+  };
+
   return (
     <Card
       key={note.id}
@@ -52,7 +65,7 @@ const NoteCard = ({ note, index }) => {
           <Tooltip title="Delete forever">
             <IconButton
               onClick={() => {
-                dispatch(deleteNoteForever(note.id));
+                handleDeleteNoteForever(note.id);
               }}
             >
               <DeleteForeverIcon fontSize="small" />
@@ -61,7 +74,7 @@ const NoteCard = ({ note, index }) => {
           <Tooltip title="Restore">
             <IconButton
               onClick={() => {
-                dispatch(restoreNote({ noteId: note.id, labels: note.labels }));
+                handleRestoreNote(note.id);
               }}
             >
               <RestoreFromTrashIcon fontSize="small" />

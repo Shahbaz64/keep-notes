@@ -3,6 +3,7 @@ import { showSnackBar } from "store";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { auth } from "database/config-firebase";
+import path from "utils/constants/path.constant";
 import SnackBar from "components/snackbar/snackBar";
 import SigninForm from "components/signIn-form/signinForm";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -14,8 +15,9 @@ const SignInPage = () => {
   const signInHandler = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider).then(navigate("/home"));
-    } catch {
+      await signInWithPopup(auth, provider).then(navigate(path.HOME));
+    } catch (err) {
+      console.error("Error!", err);
       dispatch(showSnackBar());
     }
   };

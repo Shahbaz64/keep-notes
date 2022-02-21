@@ -1,5 +1,5 @@
 import React from "react";
-import { nanoid } from "nanoid";
+import { Typography } from "@mui/material";
 import { addNote } from "store";
 import { useParams } from "react-router-dom";
 import { useStyles } from "views/labels/Label.style";
@@ -8,6 +8,7 @@ import InputBar from "components/add-note/input-bar/inputBar";
 import InputForm from "components/add-note/input-form/inputForm";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
+import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 
 const Label = () => {
   const { labelName } = useParams();
@@ -22,8 +23,16 @@ const Label = () => {
     (state) => state.toggleReducer.isOpenInputBar
   );
 
-  const addNotesHandler = (title, text, color, labels) => {
-    dispatch(addNote({ userId, title, text, color, labels }));
+  notes.map((note) => {
+    note.labels?.map((label) => {
+      if (label.name === labelName && note.isDeleted === false) {
+        labelNotes.push(note);
+      }
+    });
+  });
+
+  const addNotesHandler = (title, text, color, isDeleted, labels) => {
+    dispatch(addNote({ userId, title, text, color, isDeleted, labels }));
   };
 
   return (
@@ -35,20 +44,22 @@ const Label = () => {
       ) : (
         <InputForm handleAddNote={addNotesHandler} />
       )}
-      <div className={classes.notes}>
-        {notes.map((note) => {
-          note.labels.map((label) => {
-            if (label.name === labelName) {
-              labelNotes.push(note);
-            }
-          });
-        })}
-        {toggleView ? (
-          <NotesList key={nanoid()} notes={labelNotes} />
-        ) : (
-          <NotesGrid key={nanoid()} notes={labelNotes} />
-        )}
-      </div>
+      {labelNotes.length ? (
+        <div className={classes.notes}>
+          {toggleView ? (
+            <NotesList notes={labelNotes} />
+          ) : (
+            <NotesGrid notes={labelNotes} />
+          )}
+        </div>
+      ) : (
+        <div className={classes.center}>
+          <LabelOutlinedIcon sx={{ fontSize: 80 }} />
+          <Typography variant="h6" color="inherit">
+            No notes with this label yet.
+          </Typography>
+        </div>
+      )}
     </div>
   );
 };
