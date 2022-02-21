@@ -2,9 +2,9 @@ import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Dialog } from "@mui/material";
 import React, { useState } from "react";
-import { hideNoteDialog, deleteNote } from "store";
+import HELPER from "utils/helpers/notes.helper";
 import PaletteIcon from "@mui/icons-material/Palette";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { validationSchema } from "utils/schema/schema";
 import { TextField, IconButton, Button, Tooltip } from "@mui/material";
 import { useStyles } from "components/notes/note-dialog/noteDialog.style";
@@ -12,17 +12,15 @@ import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 import LabelsList from "components/add-note/input-form/labels-list/labelsList";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
-import HELPER from "utils/helpers/notes.helper";
+import { notePropType } from "utils/constants/prop-types.constant";
 
-const NoteDialog = ({ open, note }) => {
-  // console.log(note.id);
+const NoteDialog = ({ open, handleCloseNoteDialog, note }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [labelTerm, setLabelTerm] = useState("");
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
   const [labelChips, setLabelChips] = useState(note.labels);
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const labels = useSelector((state) => state.notesReducer.labels);
   const userId = useSelector((state) => state.authReducer.user.userId);
 
@@ -46,17 +44,6 @@ const NoteDialog = ({ open, note }) => {
         }),
       };
       HELPER.UPDATENOTE(userId, note.id, newNote);
-
-      // dispatch(
-      //   updateNote({
-      //     userId: userId,
-      //     noteId: note.id,
-      //     title: values.title,
-      //     text: values.text,
-      //     color: values.color,
-      //     labels: values.labelChips,
-      //   })
-      // );
       handleClose();
     },
     validationSchema: validationSchema,
@@ -85,7 +72,7 @@ const NoteDialog = ({ open, note }) => {
   };
 
   const handleClose = () => {
-    dispatch(hideNoteDialog());
+    handleCloseNoteDialog();
     formik.values.title = note.title;
     formik.values.text = note.text;
   };
@@ -104,7 +91,7 @@ const NoteDialog = ({ open, note }) => {
   };
 
   const deleteNoteHandler = (noteId) => {
-    dispatch(deleteNote(noteId));
+    HELPER.DELETENOTE(userId, noteId);
     handleClose();
   };
 
@@ -134,7 +121,7 @@ const NoteDialog = ({ open, note }) => {
           onSubmit={formik.handleSubmit}
           style={{
             backgroundColor: `${
-              mode
+              darkMode
                 ? formik.values.color.darkColor
                 : formik.values.color.lightColor
             }`,
@@ -194,9 +181,7 @@ const NoteDialog = ({ open, note }) => {
                 noteId={note.id}
               />
               <Tooltip title="Delete Note">
-                <IconButton
-                  onClick={() => deleteNoteHandler({ noteId: note.id })}
-                >
+                <IconButton onClick={() => deleteNoteHandler(note.id)}>
                   <DeleteOutlineOutlinedIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -213,22 +198,8 @@ const NoteDialog = ({ open, note }) => {
 
 NoteDialog.propTypes = {
   open: PropTypes.bool.isRequired,
-  note: PropTypes.shape({
-    id: PropTypes.string,
-    title: PropTypes.string,
-    text: PropTypes.string,
-    isDeleted: PropTypes.bool,
-    labels: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        id: PropTypes.string,
-      })
-    ),
-    color: PropTypes.shape({
-      lightColor: PropTypes.string,
-      darkColor: PropTypes.string,
-    }),
-  }),
+  handleCloseNoteDialog: PropTypes.func.isRequired,
+  note: notePropType,
 };
 
 export default NoteDialog;

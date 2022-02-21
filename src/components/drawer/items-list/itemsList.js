@@ -10,11 +10,12 @@ import { useSelector } from "react-redux";
 import { style } from "components/drawer/items-list/itemsList.style";
 import { useLocation, useNavigate } from "react-router-dom";
 import path from "utils/constants/path.constant";
+import { labelPropType } from "utils/constants/prop-types.constant";
 
 const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   const listItems = [
     {
@@ -53,7 +54,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
                     }}
                     sx={
                       location.pathname === `${path.LABELS}/${label.name}`
-                        ? mode
+                        ? darkMode
                           ? { ...style.darkActive }
                           : { ...style.lightActive }
                         : {}
@@ -80,7 +81,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
               onClick={() => navigate(item.path)}
               sx={
                 location.pathname === item.path
-                  ? mode
+                  ? darkMode
                     ? { ...style.darkActive }
                     : { ...style.lightActive }
                   : {}
@@ -100,7 +101,7 @@ ItemList.propTypes = {
   handleDialog: PropTypes.func,
   handleoNotes: PropTypes.func,
   handleBinFolder: PropTypes.func,
-  labels: PropTypes.array,
+  labels: labelPropType,
 };
 
 ItemList.defaultProps = {

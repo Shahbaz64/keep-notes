@@ -28,7 +28,7 @@ const AppBar = ({ handleSignOut }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   const handleNotesView = () => {
     dispatch(toggleView());
@@ -71,7 +71,7 @@ const AppBar = ({ handleSignOut }) => {
                   dispatch(setSearchTerm(e.target.value));
                 }}
                 onFocus={() => navigate(path.SEARCH)}
-                sx={mode ? { ...style.darkColor } : { ...style.lightColor }}
+                sx={darkMode ? { ...style.darkColor } : { ...style.lightColor }}
               />
             </Grid>
           )}

@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Masonry from "react-masonry-css";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useStyles, style } from "views/bin/bin.style";
 import { Button, Typography } from "@mui/material";
 import NoteCard from "views/bin/note-card/noteCard";
 import DeleteDialog from "components/delete-dialog/deleteDialog";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { showDeleteDialog } from "store";
 
 const Bin = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
+  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const notes = useSelector((state) =>
     state.notesReducer.notes.filter((note) => {
       return note.isDeleted === true;
@@ -18,15 +17,17 @@ const Bin = () => {
   );
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
-  const isOpenDeleteDialog = useSelector(
-    (state) => state.toggleReducer.isOpenDeleteDialog
-  );
+
   let isAnyDeletedNote = false;
   notes.map((note) => {
     if (note.isDeleted) {
       isAnyDeletedNote = true;
     }
   });
+
+  const handleCloseDeleteDialog = () => {
+    setIsOpenDeleteDialog(false);
+  };
 
   const breakPoint = {
     default: 5,
@@ -49,7 +50,7 @@ const Bin = () => {
           <Button
             color="inherit"
             sx={{ ...style.btn }}
-            onClick={() => dispatch(showDeleteDialog())}
+            onClick={() => setIsOpenDeleteDialog(true)}
           >
             Empty Bin
           </Button>
@@ -78,6 +79,7 @@ const Bin = () => {
           </div>
           <DeleteDialog
             open={isOpenDeleteDialog}
+            handleClose={handleCloseDeleteDialog}
             title="Empty bin? All notes in Recycle Bin will be permanently deleted."
             btnText="Empty Bin"
           />

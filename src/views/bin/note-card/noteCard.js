@@ -14,11 +14,12 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useStyles, style } from "views/bin/note-card/noteCard.style";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import { notePropType } from "utils/constants/prop-types.constant";
 
 const NoteCard = ({ note, index }) => {
   const classes = useStyles();
   const [isHovered, setIsHovered] = useState(-1);
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const userId = useSelector((state) => state.authReducer.user.userId);
   const notes = useSelector((state) => state.notesReducer.notes);
 
@@ -43,7 +44,7 @@ const NoteCard = ({ note, index }) => {
       sx={{
         ...style.card,
         backgroundColor: `${
-          mode ? note.color.darkColor : note.color.lightColor
+          darkMode ? note.color.darkColor : note.color.lightColor
         }`,
       }}
       onMouseEnter={() => {
@@ -87,8 +88,8 @@ const NoteCard = ({ note, index }) => {
 };
 
 NoteCard.propTypes = {
-  note: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
+  note: notePropType,
 };
 
 export default NoteCard;

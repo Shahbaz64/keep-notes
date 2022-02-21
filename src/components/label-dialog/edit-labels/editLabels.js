@@ -1,16 +1,16 @@
-import React, { createRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import PropTypes from "prop-types";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
+import HELPER from "utils/helpers/notes.helper";
 import LabelIcon from "@mui/icons-material/Label";
 import DeleteIcon from "@mui/icons-material/Delete";
+import React, { createRef, useState, useEffect } from "react";
 import {
   useStyles,
   style,
 } from "components/label-dialog/edit-labels/editLabel.style";
 import { IconButton, TextField, Tooltip } from "@mui/material";
-import HELPER from "utils/helpers/notes.helper";
+import { labelPropType } from "utils/constants/prop-types.constant";
 
 const EditLabels = ({ labels }) => {
   const classes = useStyles();
@@ -144,7 +144,7 @@ const EditLabels = ({ labels }) => {
 };
 
 EditLabels.propTypes = {
-  labels: PropTypes.array.isRequired,
+  labels: labelPropType,
 };
 
 EditLabels.defaultProps = {

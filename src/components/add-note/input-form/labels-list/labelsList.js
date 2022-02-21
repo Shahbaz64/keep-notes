@@ -17,6 +17,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useDispatch } from "react-redux";
 import { addLabel } from "store";
 import { useSelector } from "react-redux";
+import { labelPropType } from "utils/constants/prop-types.constant";
 // import { handleBlur } from "utils/constants/refs.constant";
 
 const LabelsList = ({
@@ -96,10 +97,8 @@ LabelsList.propTypes = {
   anchor: PropTypes.object,
   hideLabels: PropTypes.func.isRequired,
   addLabelChip: PropTypes.func.isRequired,
-  labels: PropTypes.array,
+  labels: labelPropType,
   labelTerm: PropTypes.string,
-  // forwardedref: PropTypes.any,
-  // handleBlur: PropTypes.func,
 };
 
 LabelsList.defaultProps = {

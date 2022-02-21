@@ -1,24 +1,25 @@
 import PropTypes from "prop-types";
-import { showNoteDialog } from "store";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { useStyles, style } from "components/notes/note-card/noteCard.style";
 import Actions from "components/notes/actions/actions";
 import LabelChips from "components/add-note/input-form/label-chips/labelChip";
 import NoteDialog from "components/notes/note-dialog/noteDialog";
 import HELPER from "utils/helpers/notes.helper";
+import { notePropType } from "utils/constants/prop-types.constant";
 
 const NoteCard = ({ note, index }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [isHovered, setIsHovered] = useState(-1);
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const [isOpenNoteDialog, setIsOpenNoteDialog] = useState(false);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const userId = useSelector((state) => state.authReducer.user.userId);
   const notes = useSelector((state) => state.notesReducer.notes);
-  const isOpenNoteDialog = useSelector(
-    (state) => state.toggleReducer.isOpenNoteDialog
-  );
+
+  const handleCloseNoteDialog = () => {
+    setIsOpenNoteDialog(false);
+  };
 
   const removeLabelChip = (labelId, noteId) => {
     notes.map((note) => {
@@ -38,7 +39,7 @@ const NoteCard = ({ note, index }) => {
         sx={{
           ...style.card,
           backgroundColor: `${
-            mode ? note.color.darkColor : note.color.lightColor
+            darkMode ? note.color.darkColor : note.color.lightColor
           }`,
         }}
         onMouseEnter={() => {
@@ -48,7 +49,7 @@ const NoteCard = ({ note, index }) => {
       >
         <div
           onClick={() => {
-            dispatch(showNoteDialog());
+            setIsOpenNoteDialog(true);
           }}
         >
           <CardHeader
@@ -68,7 +69,11 @@ const NoteCard = ({ note, index }) => {
         {isHovered === index && (
           <div>
             <Actions noteId={note.id} />
-            <NoteDialog open={isOpenNoteDialog} note={note} />
+            <NoteDialog
+              open={isOpenNoteDialog}
+              handleCloseNoteDialog={handleCloseNoteDialog}
+              note={note}
+            />
           </div>
         )}
       </Card>
@@ -77,22 +82,7 @@ const NoteCard = ({ note, index }) => {
 };
 
 NoteCard.propTypes = {
-  note: PropTypes.shape({
-    id: PropTypes.string,
-    title: PropTypes.string,
-    text: PropTypes.string,
-    isDeleted: PropTypes.bool,
-    labels: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string,
-        id: PropTypes.string,
-      })
-    ),
-    color: PropTypes.shape({
-      lightColor: PropTypes.string,
-      darkColor: PropTypes.string,
-    }),
-  }),
+  note: notePropType,
   index: PropTypes.number.isRequired,
 };
 

@@ -1,31 +1,24 @@
 import React from "react";
-import { IconButton, Snackbar as MuiSnackBar } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
-import { hideSnackBar } from "store";
-import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
+import CloseIcon from "@mui/icons-material/Close";
 import { style } from "components/snackbar/snackBar.style";
+import { IconButton, Snackbar as MuiSnackBar } from "@mui/material";
 
-const SnackBar = ({ msg }) => {
-  const dispatch = useDispatch();
-  const isOpenSnackBar = useSelector(
-    (state) => state.toggleReducer.isOpenSnackBar
-  );
-
+const SnackBar = ({ open, handleClose, msg }) => {
   return (
     <div>
       <MuiSnackBar
-        open={isOpenSnackBar}
+        open={open}
         autoHideDuration={5000}
         anchorOrigin={{ ...style.anchor }}
         message={msg}
-        onClose={() => dispatch(hideSnackBar())}
+        onClose={handleClose}
         action={
           <IconButton
             size="small"
             aria-label="close"
             color="inherit"
-            onClick={() => dispatch(hideSnackBar())}
+            onClick={handleClose}
           >
             <CloseIcon />
           </IconButton>
@@ -37,10 +30,14 @@ const SnackBar = ({ msg }) => {
 
 SnackBar.propTypes = {
   msg: PropTypes.string,
+  open: PropTypes.bool,
+  handleClose: PropTypes.func,
 };
 
 SnackBar.defaultProps = {
   msg: "Error!",
+  open: false,
+  handleClose: () => {},
 };
 
 export default SnackBar;

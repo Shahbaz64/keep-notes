@@ -46,7 +46,7 @@ const lightTheme = createTheme({
 });
 
 const App = () => {
-  const theme = useSelector((state) => state.toggleReducer.mode);
+  const theme = useSelector((state) => state.toggleReducer.darkMode);
   return (
     <ThemeProvider theme={theme ? darkTheme : lightTheme}>
       <Routers />

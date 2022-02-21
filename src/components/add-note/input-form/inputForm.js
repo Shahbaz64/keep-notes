@@ -45,7 +45,7 @@ const InputForm = ({ handleAddNote }) => {
   const [labelAnchor, setLabelAnchor] = useState(null);
   const [labelChips, setLabelChips] = useState([]);
   const [labelTerm, setLabelTerm] = useState("");
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const labels = useSelector((state) => state.notesReducer.labels);
 
   const addLabelChip = (id, name) => {
@@ -107,7 +107,7 @@ const InputForm = ({ handleAddNote }) => {
         onSubmit={formik.handleSubmit}
         style={{
           backgroundColor: `${
-            mode
+            darkMode
               ? formik.values.color.darkColor
               : formik.values.color.lightColor
           }`,
