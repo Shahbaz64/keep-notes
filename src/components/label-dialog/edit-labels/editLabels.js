@@ -72,7 +72,7 @@ const EditLabels = ({ labels }) => {
       note.labels?.map((label) => {
         if (label.id === labelId) {
           const newLabels = note.labels.filter((label) => label.id !== labelId);
-          HELPER.DELETELABELFROMNOTE(userId, note.id, newLabels);
+          HELPER.DELETESPECIFICLABELFROMNOTES(userId, note.id, newLabels);
         }
       });
     });

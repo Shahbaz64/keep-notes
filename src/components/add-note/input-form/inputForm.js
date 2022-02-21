@@ -49,10 +49,13 @@ const InputForm = ({ handleAddNote }) => {
   const labels = useSelector((state) => state.notesReducer.labels);
 
   const addLabelChip = (id, name) => {
-    setLabelChips((prevLabelChips) => {
-      return [...prevLabelChips, { id: id, name: name }];
-    });
-    formik.values.labelChips.push({ id: id, name: name });
+    const alreadyLabelChips = labelChips.map((label) => label.name);
+    if (!alreadyLabelChips.includes(name)) {
+      setLabelChips((prevLabelChips) => {
+        return [...prevLabelChips, { id: id, name: name }];
+      });
+      formik.values.labelChips.push({ id: id, name: name });
+    }
   };
 
   const removeChip = (labelId) => {

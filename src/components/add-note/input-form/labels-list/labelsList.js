@@ -18,7 +18,6 @@ import { useDispatch } from "react-redux";
 import { addLabel } from "store";
 import { useSelector } from "react-redux";
 import { labelPropType } from "utils/constants/prop-types.constant";
-// import { handleBlur } from "utils/constants/refs.constant";
 
 const LabelsList = ({
   anchor,
@@ -26,23 +25,13 @@ const LabelsList = ({
   addLabelChip,
   labels,
   labelTerm,
-  // forwardedref,
-  // handleBlur,
 }) => {
-  // const wrapperRef = useRef(null);
-  // handleBlur(wrapperRef);
-
-  // useEffect(() => {
-  //   handleBlur(forwardedref);
-  // }, [forwardedref]);
-
   const classes = useStyles();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.userId);
 
   return (
     <Popover
-      // ref={forwardedref}
       open={Boolean(anchor)}
       anchorEl={anchor}
       onClose={hideLabels}
@@ -75,10 +64,13 @@ const LabelsList = ({
           sx={{ ...style.listItem }}
           onClick={async () => {
             if (labelTerm) {
-              const label = await dispatch(
-                addLabel({ userId: userId, label: labelTerm })
-              );
-              addLabelChip(label.payload.id, label.payload.name);
+              const labelNames = labels.map((label) => label.name);
+              if (!labelNames.includes(labelTerm)) {
+                const label = await dispatch(
+                  addLabel({ userId: userId, label: labelTerm })
+                );
+                addLabelChip(label.payload.id, label.payload.name);
+              }
             }
             hideLabels();
           }}

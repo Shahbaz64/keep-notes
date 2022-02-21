@@ -77,6 +77,16 @@ const DELETELABEL = async (userId, labelId) => {
   store.dispatch(deleteLabel({ userId, labelId }));
 };
 
+const DELETESPECIFICLABELFROMNOTES = async (userId, noteId, newLabels) => {
+  try {
+    await updateDoc(noteDocRef(userId, noteId), {
+      labels: [...newLabels],
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const DELETELABELFROMNOTE = async (userId, labelId, noteId, newLabels) => {
   try {
     await updateDoc(noteDocRef(userId, noteId), {
@@ -140,6 +150,7 @@ export default {
   UPDATENOTE,
   UPDATENOTECOLOR,
   DELETELABEL,
+  DELETESPECIFICLABELFROMNOTES,
   DELETENOTE,
   DELETELABELFROMNOTE,
   DELETEALLNOTES,

@@ -57,10 +57,15 @@ const NoteDialog = ({ open, handleCloseNoteDialog, note }) => {
   };
 
   const addLabelChip = (id, name, notes) => {
-    formik.values.labelChips = [
-      ...formik.values.labelChips,
-      { id: id, name: name, notes: notes },
-    ];
+    const alreadyLabelChips = formik.values.labelChips.map(
+      (label) => label.name
+    );
+    if (!alreadyLabelChips.includes(name)) {
+      formik.values.labelChips = [
+        ...formik.values.labelChips,
+        { id: id, name: name, notes: notes },
+      ];
+    }
   };
 
   const showLabels = (event) => {
