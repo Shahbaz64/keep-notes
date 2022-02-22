@@ -1,24 +1,24 @@
-import React, { createRef, useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 import EditIcon from "@mui/icons-material/Edit";
 import DoneIcon from "@mui/icons-material/Done";
+import HELPER from "utils/helpers/notes.helper";
 import LabelIcon from "@mui/icons-material/Label";
 import DeleteIcon from "@mui/icons-material/Delete";
+import React, { createRef, useState, useEffect } from "react";
 import {
   useStyles,
   style,
 } from "components/label-dialog/edit-labels/editLabel.style";
 import { IconButton, TextField, Tooltip } from "@mui/material";
-import { updateLabel, deleteLabel } from "store";
+import { labelPropType } from "utils/constants/prop-types.constant";
 
 const EditLabels = ({ labels }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [newLabels, setNewLabels] = useState(labels);
   const [isFocused, setIsFocused] = useState(-1);
   const [isHovered, setIsHovered] = useState(-1);
-
+  const userId = useSelector((state) => state.authReducer.user.userId);
+  const notes = useSelector((state) => state.notesReducer.notes);
   const inputRefs = [];
 
   const setRef = (ref) => {
@@ -51,12 +51,31 @@ const EditLabels = ({ labels }) => {
   const handleUpdateLabel = (index) => {
     const labelName = newLabels[index].name;
     const labelId = newLabels[index].id;
-    dispatch(updateLabel({ labelId, labelName }));
+    HELPER.UPDATELABEL(userId, labelId, labelName);
+    notes.map((note) => {
+      const newLabels = note.labels?.map((label) => {
+        let newLabel = { ...label };
+        if (newLabel.id === labelId) {
+          newLabel.name = labelName;
+          return newLabel;
+        }
+        return newLabel;
+      });
+      HELPER.UPDATELABELFROMNOTES(userId, note.id, newLabels);
+    });
   };
 
   const handleDeleteLabel = (index) => {
     const labelId = newLabels[index].id;
-    dispatch(deleteLabel({ labelId }));
+    HELPER.DELETELABEL(userId, labelId);
+    notes.map((note) => {
+      note.labels?.map((label) => {
+        if (label.id === labelId) {
+          const newLabels = note.labels.filter((label) => label.id !== labelId);
+          HELPER.DELETESPECIFICLABELFROMNOTES(userId, note.id, newLabels);
+        }
+      });
+    });
   };
 
   return (
@@ -125,7 +144,7 @@ const EditLabels = ({ labels }) => {
 };
 
 EditLabels.propTypes = {
-  labels: PropTypes.array.isRequired,
+  labels: labelPropType,
 };
 
 EditLabels.defaultProps = {

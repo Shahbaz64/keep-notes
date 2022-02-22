@@ -3,12 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isOpenInputBar: true,
   isOpenDrawer: true,
-  isOpenSnackBar: false,
-  isOpenLabelDialog: false,
-  isOpenNoteDialog: false,
-  isOpenDeleteDialog: false,
   toggleView: false,
-  mode: false,
+  darkMode: false,
 };
 
 export const togglesSlice = createSlice({
@@ -21,24 +17,7 @@ export const togglesSlice = createSlice({
     hideInputBar: (state) => {
       state.isOpenInputBar = false;
     },
-    showLabelDialog: (state) => {
-      state.isOpenLabelDialog = true;
-    },
-    hideLabelDialog: (state) => {
-      state.isOpenLabelDialog = false;
-    },
-    showNoteDialog: (state) => {
-      state.isOpenNoteDialog = true;
-    },
-    hideNoteDialog: (state) => {
-      state.isOpenNoteDialog = false;
-    },
-    showDeleteDialog: (state) => {
-      state.isOpenDeleteDialog = true;
-    },
-    hideDeleteDialog: (state) => {
-      state.isOpenDeleteDialog = false;
-    },
+
     toggleDrawer: (state) => {
       if (state.isOpenDrawer === true) {
         state.isOpenDrawer = false;
@@ -54,17 +33,11 @@ export const togglesSlice = createSlice({
       }
     },
     toggleMode: (state) => {
-      if (state.mode === true) {
-        state.mode = false;
+      if (state.darkMode === true) {
+        state.darkMode = false;
       } else {
-        state.mode = true;
+        state.darkMode = true;
       }
-    },
-    showSnackBar: (state) => {
-      state.isOpenSnackBar = true;
-    },
-    hideSnackBar: (state) => {
-      state.isOpenSnackBar = false;
     },
   },
 });
@@ -75,13 +48,5 @@ export const {
   toggleDrawer,
   toggleMode,
   toggleView,
-  showSnackBar,
-  hideSnackBar,
-  showLabelDialog,
-  hideLabelDialog,
-  showNoteDialog,
-  hideNoteDialog,
-  showDeleteDialog,
-  hideDeleteDialog,
 } = togglesSlice.actions;
 export default togglesSlice.reducer;

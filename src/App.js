@@ -1,7 +1,7 @@
 import React from "react";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Routers from "routes";
+import UserRoutes from "routes/userRoutes";
 import { useSelector } from "react-redux";
 
 const darkTheme = createTheme({
@@ -12,6 +12,7 @@ const darkTheme = createTheme({
     },
     secondary: {
       main: "#FFC107",
+      light: "#41331C",
     },
     primary: {
       main: "rgba(241, 243, 244, 0.24)",
@@ -21,6 +22,7 @@ const darkTheme = createTheme({
     button: {
       textTransform: "none",
     },
+    fontFamily: ["Google Sans", "Open Sans"].join(","),
   },
 });
 
@@ -32,20 +34,22 @@ const lightTheme = createTheme({
     },
     secondary: {
       main: "#FFC107",
+      light: "#FEEFC3",
     },
   },
   typography: {
     button: {
       textTransform: "none",
     },
+    fontFamily: ["Google Sans", "Open Sans"].join(","),
   },
 });
 
 const App = () => {
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const theme = useSelector((state) => state.toggleReducer.darkMode);
   return (
-    <ThemeProvider theme={mode ? darkTheme : lightTheme}>
-      <Routers />
+    <ThemeProvider theme={theme ? darkTheme : lightTheme}>
+      <UserRoutes />
       <CssBaseline />
     </ThemeProvider>
   );

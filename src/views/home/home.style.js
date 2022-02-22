@@ -13,4 +13,14 @@ export const useStyles = makeStyles({
     margin: "20px auto",
     width: "90%",
   },
+  center: {
+    display: "flex",
+    flexDirection: "column",
+    width: "90%",
+    margin: "auto auto",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#CCCCCC",
+    marginTop: "15%",
+  },
 });

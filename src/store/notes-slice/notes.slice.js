@@ -1,87 +1,81 @@
-import {
-  deleteDoc,
-  updateDoc,
-  getDocs,
-  addDoc,
-  setDoc,
-} from "firebase/firestore";
+import { getDocs, addDoc } from "firebase/firestore";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  notesRef,
-  labelsRef,
-  labelDocRef,
-  noteDocRef,
-  deletedNotesRef,
-  deletedNoteDocRef,
-} from "database/config-firebase";
+import { notesRef, labelsRef } from "database/config-firebase";
 
 const initialState = {
-  userId: "",
   notes: [],
   labels: [],
-  deletedNotes: [],
+  searchTerm: "",
+  labelTerm: "",
   loading: true,
-  labelChips: [],
-  error: { isError: false, errorMsg: "" },
+  errorMsg: "",
+  useRefs: [],
 };
 
 export const getNotes = createAsyncThunk("getNotes", async (userId) => {
-  const response = await getDocs(notesRef(userId));
-  const notes = response.docs.map((doc) => {
-    return { ...doc.data(), id: doc.id };
-  });
-  return notes;
-});
-
-export const getLabels = createAsyncThunk("getLabels", async (userId) => {
-  const response = await getDocs(labelsRef(userId));
-  const labels = response.docs.map((doc) => {
-    return { ...doc.data(), id: doc.id };
-  });
-  return labels;
-});
-
-export const getDeletedNotes = createAsyncThunk(
-  "getDeletedNotes",
-  async (userId) => {
-    const response = await getDocs(deletedNotesRef(userId));
+  try {
+    const response = await getDocs(notesRef(userId));
     const notes = response.docs.map((doc) => {
       return { ...doc.data(), id: doc.id };
     });
     return notes;
+  } catch (err) {
+    return err;
   }
-);
+});
+
+export const getLabels = createAsyncThunk("getLabels", async (userId) => {
+  try {
+    const response = await getDocs(labelsRef(userId));
+    const labels = response.docs.map((doc) => {
+      return { ...doc.data(), id: doc.id };
+    });
+    return labels;
+  } catch (err) {
+    return err;
+  }
+});
 
 export const addLabel = createAsyncThunk("addLabel", async (data) => {
-  const { userId, label } = data;
-  const response = await addDoc(labelsRef(userId), {
-    name: label,
-  });
-  const newLabel = { name: label, id: response.id };
-  return newLabel;
+  try {
+    const { userId, label } = data;
+    const response = await addDoc(labelsRef(userId), {
+      name: label,
+    });
+    const newLabel = { name: label, id: response.id };
+    return newLabel;
+  } catch (err) {
+    return err;
+  }
 });
 
 export const addNote = createAsyncThunk("addNote", async (data) => {
-  const { userId, title, text, color, labels } = data;
-  const response = await addDoc(notesRef(userId), {
-    title: title,
-    text: text,
-    color: color,
-    labels: labels.map((label) => {
-      return { id: label.id, name: label.name };
-    }),
-  });
+  try {
+    const { userId, title, text, color, isDeleted, labels } = data;
+    const response = await addDoc(notesRef(userId), {
+      title: title,
+      text: text,
+      color: color,
+      isDeleted: isDeleted,
+      labels: labels.map((label) => {
+        return { id: label.id, name: label.name };
+      }),
+    });
 
-  const newNote = {
-    id: response.id,
-    title: title,
-    text: text,
-    color: color,
-    labels: labels.map((label) => {
-      return { id: label.id, name: label.name };
-    }),
-  };
-  return newNote;
+    const newNote = {
+      id: response.id,
+      title: title,
+      text: text,
+      color: color,
+      isDeleted: isDeleted,
+      labels: labels.map((label) => {
+        return { id: label.id, name: label.name };
+      }),
+    };
+    return newNote;
+  } catch (err) {
+    return err;
+  }
 });
 
 export const notesSlice = createSlice({
@@ -95,10 +89,9 @@ export const notesSlice = createSlice({
       state.loading = false;
       state.notes = action.payload;
     },
-    [getNotes.rejected]: (state) => {
+    [getNotes.rejected]: (state, action) => {
       state.loading = false;
-      state.error.isError = true;
-      state.error.errorMsg = "ERROR getting Notes";
+      state.errorMsg = action.payload;
     },
 
     [getLabels.pending]: (state) => {
@@ -108,23 +101,9 @@ export const notesSlice = createSlice({
       state.loading = false;
       state.labels = action.payload;
     },
-    [getLabels.rejected]: (state) => {
+    [getLabels.rejected]: (state, action) => {
       state.loading = false;
-      state.error.isError = true;
-      state.error.errorMsg = "ERROR getting Notes";
-    },
-
-    [getDeletedNotes.pending]: (state) => {
-      state.loading = true;
-    },
-    [getDeletedNotes.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.deletedNotes = action.payload;
-    },
-    [getDeletedNotes.rejected]: (state) => {
-      state.loading = false;
-      state.error.isError = true;
-      state.error.errorMsg = "ERROR getting Notes";
+      state.errorMsg = action.payload;
     },
 
     [addLabel.pending]: (state) => {
@@ -134,10 +113,9 @@ export const notesSlice = createSlice({
       state.loading = false;
       state.labels = [...state.labels, action.payload];
     },
-    [addLabel.rejected]: (state) => {
+    [addLabel.rejected]: (state, action) => {
       state.loading = false;
-      state.error.isError = true;
-      state.error.errorMsg = "ERROR adding Labels";
+      state.errorMsg = action.payload;
     },
 
     [addNote.pending]: (state) => {
@@ -147,71 +125,42 @@ export const notesSlice = createSlice({
       state.loading = false;
       state.notes = [...state.notes, action.payload];
     },
-    [addNote.rejected]: (state) => {
+    [addNote.rejected]: (state, action) => {
       state.loading = false;
-      state.error.isError = true;
-      state.error.errorMsg = "ERROR adding Notes";
+      state.errorMsg = action.payload;
     },
   },
 
   reducers: {
-    setUserId: (state, action) => {
-      state.userId = action.payload;
+    setSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
     },
 
     updateLabel: (state, action) => {
-      updateDoc(labelDocRef(state.userId, action.payload.labelId), {
-        name: action.payload.labelName,
-      });
-
       state.labels.map((label) => {
         if (label.id === action.payload.labelId) {
           label.name = action.payload.labelName;
         }
       });
 
-      state.notes.map((note) => {
-        note.labels.map((label) => {
+      state.notes?.map((note) => {
+        note.labels?.map((label) => {
           if (label.id === action.payload.labelId) {
             label.name = action.payload.labelName;
-            updateDoc(
-              noteDocRef(state.userId, note.id),
-              {
-                labels: [...note.labels],
-              },
-              { merge: true }
-            );
           }
         });
       });
     },
 
     updateNoteColor: (state, action) => {
-      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
-        color: action.payload.color,
-      });
-      state.notes = state.notes.map((note) => {
-        let newNote = { ...note };
-        if (newNote.id === action.payload.noteId) {
-          newNote.color = action.payload.color;
+      state.notes.map((note) => {
+        if (note.id === action.payload.noteId) {
+          note.color = action.payload.color;
         }
-        return newNote;
       });
     },
 
     updateNote: (state, action) => {
-      const newNote = {
-        title: action.payload.title,
-        text: action.payload.text,
-        color: action.payload.color,
-        labels: action.payload.labels.map((label) => {
-          return { id: label.id, name: label.name };
-        }),
-      };
-      updateDoc(noteDocRef(state.userId, action.payload.noteId), {
-        ...newNote,
-      });
-
       state.notes.map((note) => {
         if (note.id === action.payload.noteId) {
           note.title = action.payload.title;
@@ -225,7 +174,6 @@ export const notesSlice = createSlice({
     },
 
     deleteLabel: (state, action) => {
-      deleteDoc(labelDocRef(state.userId, action.payload.labelId));
       state.labels.map((label, index) => {
         if (label.id === action.payload.labelId) {
           return state.labels.splice(index, 1);
@@ -233,14 +181,8 @@ export const notesSlice = createSlice({
       });
 
       state.notes.map((note) => {
-        note.labels.map((label, index) => {
+        note.labels?.map((label, index) => {
           if (label.id === action.payload.labelId) {
-            const newLabels = note.labels.filter(
-              (label) => label.id !== action.payload.labelId
-            );
-            updateDoc(noteDocRef(state.userId, note.id), {
-              labels: newLabels,
-            });
             return note.labels.splice(index, 1);
           }
         });
@@ -248,84 +190,43 @@ export const notesSlice = createSlice({
     },
 
     deleteNote: (state, action) => {
-      state.notes.map((note, index) => {
+      state.notes.map((note) => {
         if (note.id === action.payload.noteId) {
-          const deletedNote = {
-            title: note.title,
-            text: note.text,
-            color: note.color,
-            labels: note.labels,
-          };
-          state.deletedNotes.push({ ...deletedNote, id: note.id });
-          setDoc(deletedNoteDocRef(state.userId, note.id), {
-            ...deletedNote,
-          });
-          return state.notes.splice(index, 1);
+          note.isDeleted = true;
         }
       });
-      deleteDoc(noteDocRef(state.userId, action.payload.noteId));
-    },
-
-    addLabelChips: (state, action) => {
-      state.labelChips.push(action.payload);
-    },
-
-    emptyLabelChips: (state) => {
-      state.labelChips = [];
-    },
-
-    removeLabelChip: (state, action) => {
-      state.labelChips = state.labelChips.filter(
-        (label) => label.id !== action.payload
-      );
     },
 
     deleteLabelsFromNote: (state, action) => {
       state.notes.map((note) => {
         if (note.id === action.payload.noteId) {
-          const newLabels = note.labels.filter(
-            (label) => label.id !== action.payload.labelId
-          );
           note.labels.map((label, index) => {
             if (label.id === action.payload.labelId) {
               return note.labels.splice(index, 1);
             }
-          });
-          updateDoc(noteDocRef(state.userId, action.payload.noteId), {
-            labels: newLabels,
           });
         }
       });
     },
 
     deleteAllNotes: (state) => {
-      state.deletedNotes.map((note) => {
-        deleteDoc(deletedNoteDocRef(state.userId, note.id));
+      state.notes = state.notes.filter((note) => {
+        return note.isDeleted !== true;
       });
-      state.deletedNotes = [];
     },
 
     deleteNoteForever: (state, action) => {
-      state.deletedNotes.map((note, index) => {
-        if (note.id == action.payload) {
-          return state.deletedNotes.splice(index, 1);
+      state.notes.map((note, index) => {
+        if (note.id === action.payload.noteId) {
+          return state.notes.splice(index, 1);
         }
       });
-      deleteDoc(deletedNoteDocRef(state.userId, action.payload));
     },
 
     restoreNote: (state, action) => {
-      state.deletedNotes.map((note, index) => {
-        if (note.id == action.payload.noteId) {
-          state.notes.push(note);
-          setDoc(noteDocRef(state.userId, action.payload.noteId), {
-            title: note.title,
-            text: note.text,
-            color: note.color,
-            labels: note.labels,
-          });
-          deleteDoc(deletedNoteDocRef(state.userId, action.payload.noteId));
-          return state.deletedNotes.splice(index, 1);
+      state.notes.map((note) => {
+        if (note.id === action.payload.noteId) {
+          note.isDeleted = false;
         }
       });
     },
@@ -334,13 +235,11 @@ export const notesSlice = createSlice({
 
 export const {
   updateNoteColor,
-  addLabelChips,
-  emptyLabelChips,
-  removeLabelChip,
   deleteLabelsFromNote,
   deleteNoteFromLabels,
   updateNote,
   setUserId,
+  setSearchTerm,
   updateLabel,
   deleteLabel,
   deleteNote,

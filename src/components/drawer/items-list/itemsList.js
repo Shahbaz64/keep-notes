@@ -9,17 +9,19 @@ import { nanoid } from "nanoid";
 import { useSelector } from "react-redux";
 import { style } from "components/drawer/items-list/itemsList.style";
 import { useLocation, useNavigate } from "react-router-dom";
+import path from "utils/constants/path.constant";
+import { labelPropType } from "utils/constants/prop-types.constant";
 
 const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   const listItems = [
     {
       icon: <LightbulbOutlinedIcon />,
       text: "Notes",
-      path: "/home",
+      path: path.HOME,
       handleClick: handleoNotes,
     },
     {
@@ -31,7 +33,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
     {
       icon: <DeleteOutlinedIcon />,
       text: "Bin",
-      path: "/bin",
+      path: path.BIN,
       handleClick: handleBinFolder,
     },
   ];
@@ -48,11 +50,11 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
                     button
                     key={label.id}
                     onClick={() => {
-                      navigate(`/labels/${label.name}`);
+                      navigate(`${path.LABELS}/${label.name}`);
                     }}
                     sx={
-                      location.pathname === `/labels/${label.name}`
-                        ? mode
+                      location.pathname === `${path.LABELS}/${label.name}`
+                        ? darkMode
                           ? { ...style.darkActive }
                           : { ...style.lightActive }
                         : {}
@@ -79,7 +81,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
               onClick={() => navigate(item.path)}
               sx={
                 location.pathname === item.path
-                  ? mode
+                  ? darkMode
                     ? { ...style.darkActive }
                     : { ...style.lightActive }
                   : {}
@@ -99,7 +101,7 @@ ItemList.propTypes = {
   handleDialog: PropTypes.func,
   handleoNotes: PropTypes.func,
   handleBinFolder: PropTypes.func,
-  labels: PropTypes.array,
+  labels: labelPropType,
 };
 
 ItemList.defaultProps = {
