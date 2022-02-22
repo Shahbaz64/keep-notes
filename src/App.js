@@ -1,7 +1,7 @@
 import React from "react";
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Routers from "routes";
+import UserRoutes from "routes/userRoutes";
 import { useSelector } from "react-redux";
 
 const darkTheme = createTheme({
@@ -49,7 +49,7 @@ const App = () => {
   const theme = useSelector((state) => state.toggleReducer.darkMode);
   return (
     <ThemeProvider theme={theme ? darkTheme : lightTheme}>
-      <Routers />
+      <UserRoutes />
       <CssBaseline />
     </ThemeProvider>
   );

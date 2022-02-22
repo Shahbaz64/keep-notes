@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isOpenInputBar: true,
   isOpenDrawer: true,
-  isOpenLabelDialog: false,
   toggleView: false,
   darkMode: false,
 };

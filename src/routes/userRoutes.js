@@ -1,25 +1,21 @@
-import { signInUser, toggleLoading, getNotes, getLabels } from "store";
-import {
-  Routes,
-  BrowserRouter as Router,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import Layout from "Layout";
+import Layout from "layout/layout";
 import Bin from "views/bin/bin";
 import Home from "views/home/home";
 import Label from "views/labels/Label";
 import Search from "views/search/search";
-import SignIn from "views/signIn/signIn";
 import React, { useEffect } from "react";
+import SignIn from "views/signIn/signIn";
+import ErrorPage from "views/error/error";
+import CustomRoutes from "routes/customRoute";
 import { auth } from "database/config-firebase";
 import path from "utils/constants/path.constant";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import ProgressBar from "components/progress-bar/progressBar";
-import ErrorPage from "views/error/error";
+import { signInUser, toggleLoading, getNotes, getLabels } from "store";
+import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 
-const Routers = () => {
+const UserRoutes = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.userId);
   const isLoading = useSelector((state) => state.authReducer.isLoading);
@@ -51,67 +47,45 @@ const Routers = () => {
   return (
     <Router>
       <Routes>
-        <Route
-          exact
-          path={path.SIGNIN}
-          element={!userId ? <SignIn /> : <Navigate to={path.HOME} />}
-        />
-        <Route
-          exact
-          path={path.HOME}
-          element={
-            userId ? (
+        <Route exact path={path.SIGNIN} element={<SignIn />} />
+        <Route element={<CustomRoutes userId={userId} />}>
+          <Route
+            path={path.HOME}
+            element={
               <Layout>
                 <Home />
               </Layout>
-            ) : (
-              <Navigate to={path.SIGNIN} />
-            )
-          }
-        />
-        <Route
-          exact
-          path={path.BIN}
-          element={
-            userId ? (
+            }
+          />
+          <Route
+            path={path.BIN}
+            element={
               <Layout>
                 <Bin />
               </Layout>
-            ) : (
-              <Navigate to={path.SIGNIN} />
-            )
-          }
-        />
-        <Route
-          exact
-          path={`${path.LABELS}/:labelName`}
-          element={
-            userId ? (
+            }
+          />
+          <Route
+            path={`${path.LABELS}/:labelName`}
+            element={
               <Layout>
                 <Label />
               </Layout>
-            ) : (
-              <Navigate to={path.SIGNIN} />
-            )
-          }
-        />
-        <Route
-          exact
-          path={path.SEARCH}
-          element={
-            userId ? (
+            }
+          />
+          <Route
+            path={path.SEARCH}
+            element={
               <Layout>
                 <Search />
               </Layout>
-            ) : (
-              <Navigate to={path.SIGNIN} />
-            )
-          }
-        />
+            }
+          />
+        </Route>
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );
 };
 
-export default Routers;
+export default UserRoutes;
