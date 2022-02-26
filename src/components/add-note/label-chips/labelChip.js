@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {
   useStyles,
   style,
-} from "components/add-note/input-form/label-chips/labelChips.style";
+} from "components/add-note/label-chips/labelChips.style";
 import { Stack, Chip } from "@mui/material";
 
 const LabelChips = ({ chips, removeLabelChip, noteId }) => {

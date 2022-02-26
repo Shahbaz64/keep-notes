@@ -1,10 +1,12 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
-import AppBar from "components/appbar/appbar";
+import React, { useState } from "react";
+import { addLabel } from "store";
 import Drawer from "components/drawer/drawer";
+import AppBar from "components/appbar/appbar";
 import { useDispatch, useSelector } from "react-redux";
-import { signOutUser, addLabel } from "store";
 import LabelDialog from "components/label-dialog/labelDialog";
+import SideBar from "components/drawer/side-bar/sideIconBar";
+import userHelper from "utils/helpers/user.helper";
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -17,7 +19,7 @@ const Layout = ({ children }) => {
   };
 
   const signOutHandler = () => {
-    dispatch(signOutUser());
+    userHelper.SIGNOUTUSER();
   };
 
   const openDialogHandler = () => {
@@ -32,6 +34,7 @@ const Layout = ({ children }) => {
     <div>
       <AppBar handleSignOut={signOutHandler} />
       <Drawer handleDialog={openDialogHandler} labels={labels} />
+      <SideBar handleDialog={openDialogHandler} />
       <LabelDialog
         open={isOpenLabelDialog}
         handleClose={handleCloseLabelDialog}

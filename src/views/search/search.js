@@ -5,10 +5,11 @@ import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
 
 const Search = () => {
-  const classes = useStyles();
   const searchTerm = useSelector((state) => state.notesReducer.searchTerm);
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+
+  const classes = useStyles();
   const notes = useSelector((state) =>
     state.notesReducer.notes.filter((note) => {
       return note.isDeleted != true;
@@ -22,7 +23,9 @@ const Search = () => {
 
   return (
     <div
-      className={isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft}
+      className={
+        isOpenDrawer ? classes.shiftContentRight : classes.shiftContentLeft
+      }
     >
       <div className={classes.header}>
         {toggleView ? (

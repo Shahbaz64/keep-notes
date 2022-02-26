@@ -6,13 +6,12 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  // ListItemIcon,
   Typography,
 } from "@mui/material";
 import {
   useStyles,
   style,
-} from "components/add-note/input-form/labels-list/labelList.style";
+} from "components/add-note/labels-list/labelList.style";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch } from "react-redux";
 import { addLabel } from "store";
@@ -29,6 +28,22 @@ const LabelsList = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.userId);
+  const filteredLabels = labels.filter((label) => {
+    return label.name.includes(labelTerm);
+  });
+
+  const createLabelHandler = async () => {
+    if (labelTerm) {
+      const labelNames = labels.map((label) => label.name);
+      if (!labelNames.includes(labelTerm)) {
+        const label = await dispatch(
+          addLabel({ userId: userId, label: labelTerm })
+        );
+        addLabelChip(label.payload.id, label.payload.name);
+      }
+    }
+    hideLabels();
+  };
 
   return (
     <Popover
@@ -41,7 +56,7 @@ const LabelsList = ({
       transformOrigin={{ vertical: "top", horizontal: "left" }}
     >
       <List sx={{ ...style.list }}>
-        {labels.map((label) => {
+        {filteredLabels.map((label) => {
           return (
             <ListItem
               button
@@ -58,22 +73,11 @@ const LabelsList = ({
             </ListItem>
           );
         })}
-        <Divider />
+        {filteredLabels.length !== 0 && <Divider />}
         <ListItem
           button
           sx={{ ...style.listItem }}
-          onClick={async () => {
-            if (labelTerm) {
-              const labelNames = labels.map((label) => label.name);
-              if (!labelNames.includes(labelTerm)) {
-                const label = await dispatch(
-                  addLabel({ userId: userId, label: labelTerm })
-                );
-                addLabelChip(label.payload.id, label.payload.name);
-              }
-            }
-            hideLabels();
-          }}
+          onClick={createLabelHandler}
         >
           <AddIcon fontSize="small" />
           <Typography variant="body2" sx={{ ...style.itemText }}>

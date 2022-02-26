@@ -36,3 +36,9 @@ export const useStyles = makeStyles({
     alignItems: "center",
   },
 });
+
+export const style = {
+  title: {
+    marginTop: "10px",
+  },
+};

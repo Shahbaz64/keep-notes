@@ -8,7 +8,7 @@ export const useStyles = makeStyles({
 
 export const style = {
   input: {
-    marginLeft: "12px",
-    marginRight: "12px",
+    marginLeft: "10px",
+    marginRight: "10px",
   },
 };

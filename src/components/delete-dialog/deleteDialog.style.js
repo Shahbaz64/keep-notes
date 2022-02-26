@@ -1,6 +1,5 @@
 export const style = {
-  btn: {
-    color: "blue",
+  emptyButton: {
     marginLeft: "8px",
     marginRight: "8px",
   },

@@ -4,17 +4,17 @@ import Masonry from "react-masonry-css";
 import NoteCard from "components/notes/note-card/noteCard";
 
 const NotesGrid = ({ notes }) => {
-  const breakPoint = {
+  const breakPoints = {
     default: 5,
     1250: 5,
-    1100: 4,
-    900: 3,
+    1150: 4,
+    920: 3,
     700: 2,
-    450: 1,
+    500: 1,
   };
   return (
     <Masonry
-      breakpointCols={breakPoint}
+      breakpointCols={breakPoints}
       className="my-masonry-grid"
       columnClassName="my-masonry-grid_column"
     >

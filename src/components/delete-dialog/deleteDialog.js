@@ -35,8 +35,8 @@ const DeleteDialog = ({ open, title, btnText, handleClose }) => {
             Cancel
           </Button>
           <Button
-            color="inherit"
-            sx={{ ...style.btn }}
+            color="info"
+            sx={{ ...style.emptyButton }}
             onClick={handleDeleteAllNotes}
           >
             {btnText}

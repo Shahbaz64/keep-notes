@@ -13,7 +13,7 @@ import HELPER from "utils/helpers/notes.helper";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useStyles, style } from "views/bin/note-card/noteCard.style";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
-import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import LabelChips from "components/add-note/label-chips/labelChip";
 import { notePropType } from "utils/constants/prop-types.constant";
 
 const NoteCard = ({ note, index }) => {

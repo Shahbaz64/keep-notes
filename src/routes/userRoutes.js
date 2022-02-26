@@ -10,27 +10,25 @@ import CustomRoutes from "routes/customRoute";
 import { auth } from "database/config-firebase";
 import path from "utils/constants/path.constant";
 import { onAuthStateChanged } from "firebase/auth";
+import userHelper from "utils/helpers/user.helper";
 import { useDispatch, useSelector } from "react-redux";
+import { toggleLoading, getNotes, getLabels } from "store";
 import ProgressBar from "components/progress-bar/progressBar";
-import { signInUser, toggleLoading, getNotes, getLabels } from "store";
 import { Routes, BrowserRouter as Router, Route } from "react-router-dom";
 
 const UserRoutes = () => {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.authReducer.user.userId);
   const isLoading = useSelector((state) => state.authReducer.isLoading);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(
-          signInUser({
-            userId: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          })
-        );
+        userHelper.SIGNINUSER({
+          userId: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        });
         dispatch(getLabels(user.uid));
         dispatch(getNotes(user.uid));
         dispatch(toggleLoading(false));
@@ -48,7 +46,7 @@ const UserRoutes = () => {
     <Router>
       <Routes>
         <Route exact path={path.SIGNIN} element={<SignIn />} />
-        <Route element={<CustomRoutes userId={userId} />}>
+        <Route element={<CustomRoutes />}>
           <Route
             path={path.HOME}
             element={

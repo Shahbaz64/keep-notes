@@ -1,14 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Navigate, Outlet } from "react-router-dom";
 import path from "utils/constants/path.constant";
+import { useSelector } from "react-redux";
 
-const CustomRoutes = ({ userId }) => {
+const CustomRoutes = () => {
+  const userId = useSelector((state) => state.authReducer.user.userId);
   return userId ? <Outlet /> : <Navigate to={path.SIGNIN} />;
-};
-
-CustomRoutes.propTypes = {
-  userId: PropTypes.string.isRequired,
 };
 
 export default CustomRoutes;

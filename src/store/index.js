@@ -5,6 +5,7 @@ import {
 } from "store/auth-slice/auth.slice";
 import {
   setSearchTerm,
+  setAppBarHeader,
   addNote,
   getNotes,
   addLabel,
@@ -21,10 +22,8 @@ import {
   restoreNote,
 } from "store/notes-slice/notes.slice";
 import {
-  showInputBar,
-  hideInputBar,
   toggleDrawer,
-  toggleMode,
+  toggleTheme,
   toggleView,
 } from "store/toggle-slice/toggles.slice";
 
@@ -33,6 +32,7 @@ export {
   signOutUser,
   toggleLoading,
   setSearchTerm,
+  setAppBarHeader,
   addNote,
   getNotes,
   getLabels,
@@ -42,10 +42,8 @@ export {
   addLabel,
   updateNoteColor,
   updateNote,
-  showInputBar,
-  hideInputBar,
   toggleDrawer,
-  toggleMode,
+  toggleTheme,
   toggleView,
   deleteLabelsFromNote,
   deleteNoteFromLabels,

@@ -8,10 +8,10 @@ import { useSelector } from "react-redux";
 import { validationSchema } from "utils/schema/schema";
 import { TextField, IconButton, Button, Tooltip } from "@mui/material";
 import { useStyles } from "components/notes/note-dialog/noteDialog.style";
-import LabelChips from "components/add-note/input-form/label-chips/labelChip";
-import LabelsList from "components/add-note/input-form/labels-list/labelsList";
+import LabelChips from "components/add-note/label-chips/labelChip";
+import LabelsList from "components/add-note/labels-list/labelsList";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
+import ColorPallete from "components/add-note/color-pallete/colorPallete";
 import { notePropType } from "utils/constants/prop-types.constant";
 
 const NoteDialog = ({ open, handleCloseNoteDialog, note }) => {

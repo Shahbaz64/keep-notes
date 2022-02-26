@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useStyles, style } from "components/notes/actions/actions.style";
 import { Tooltip, IconButton } from "@mui/material";
-import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
+import ColorPallete from "components/add-note/color-pallete/colorPallete";
 import PaletteOutlinedIcon from "@mui/icons-material/PaletteOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useSelector } from "react-redux";

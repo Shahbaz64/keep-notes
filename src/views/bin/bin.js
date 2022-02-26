@@ -8,7 +8,6 @@ import DeleteDialog from "components/delete-dialog/deleteDialog";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 const Bin = () => {
-  const classes = useStyles();
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const notes = useSelector((state) =>
     state.notesReducer.notes.filter((note) => {
@@ -17,6 +16,10 @@ const Bin = () => {
   );
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+  const isOpenIconBar = useSelector(
+    (state) => state.toggleReducer.isOpenIconBar
+  );
+  const classes = useStyles({ isOpenDrawer, isOpenIconBar });
 
   let isAnyDeletedNote = false;
   notes.map((note) => {
@@ -29,18 +32,20 @@ const Bin = () => {
     setIsOpenDeleteDialog(false);
   };
 
-  const breakPoint = {
+  const breakPoints = {
     default: 5,
     1250: 5,
-    1100: 4,
-    900: 3,
+    1150: 4,
+    920: 3,
     700: 2,
-    450: 1,
+    500: 1,
   };
 
   return (
     <div
-      className={isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft}
+      className={
+        isOpenDrawer ? classes.shiftContentRight : classes.shiftContentLeft
+      }
     >
       <div className={classes.header}>
         <Typography fontStyle="italic">
@@ -48,8 +53,10 @@ const Bin = () => {
         </Typography>
         {isAnyDeletedNote && (
           <Button
-            color="inherit"
-            sx={{ ...style.btn }}
+            className={classes.emptyButton}
+            variant="text"
+            color="info"
+            sx={{ ...style.emptyButton }}
             onClick={() => setIsOpenDeleteDialog(true)}
           >
             Empty Bin
@@ -67,7 +74,7 @@ const Bin = () => {
               </div>
             ) : (
               <Masonry
-                breakpointCols={breakPoint}
+                breakpointCols={breakPoints}
                 className="my-masonry-grid"
                 columnClassName="my-masonry-grid_column"
               >

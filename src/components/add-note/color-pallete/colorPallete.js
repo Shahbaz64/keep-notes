@@ -4,11 +4,8 @@ import PropTypes from "prop-types";
 import { Popover } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Grid, Tooltip, Box } from "@mui/material";
-import {
-  useStyles,
-  style,
-} from "components/add-note/input-form/color-pallete/colorPallete.style";
-import { bgColors } from "components/add-note/input-form/color-pallete/bgColors";
+import { useStyles } from "components/add-note/color-pallete/colorPallete.style";
+import { bgColors } from "components/add-note/color-pallete/bgColors";
 import InvertColorsOffOutlinedIcon from "@mui/icons-material/InvertColorsOffOutlined";
 
 const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
@@ -28,7 +25,6 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
           <Box
             onClick={() => getColor("#FFFFFF", "#121212", noteId)}
             className={classes.avatar}
-            sx={{ ...style.box }}
           >
             <InvertColorsOffOutlinedIcon fontSize="small" />
           </Box>
@@ -40,8 +36,8 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
                 onClick={() =>
                   getColor(bgColor.lightColor, bgColor.darkColor, noteId)
                 }
+                className={classes.avatar}
                 sx={{
-                  ...style.box,
                   backgroundColor: `${
                     darkMode ? bgColor.darkColor : bgColor.lightColor
                   }`,

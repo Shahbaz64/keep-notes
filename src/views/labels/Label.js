@@ -4,24 +4,20 @@ import { addNote } from "store";
 import { useParams } from "react-router-dom";
 import { useStyles } from "views/labels/Label.style";
 import { useSelector, useDispatch } from "react-redux";
-import InputBar from "components/add-note/input-bar/inputBar";
-import InputForm from "components/add-note/input-form/inputForm";
+import InputForm from "components/add-note/inputForm";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 
 const Label = () => {
   const { labelName } = useParams();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notesReducer.notes);
   const userId = useSelector((state) => state.authReducer.user.userId);
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+  const classes = useStyles({ isOpenDrawer });
   const labelNotes = [];
-  const isOpenInputBar = useSelector(
-    (state) => state.toggleReducer.isOpenInputBar
-  );
 
   notes.map((note) => {
     note.labels?.map((label) => {
@@ -37,13 +33,12 @@ const Label = () => {
 
   return (
     <div
-      className={isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft}
+      className={
+        isOpenDrawer ? classes.shiftContentRight : classes.shiftContentLeft
+      }
     >
-      {isOpenInputBar ? (
-        <InputBar />
-      ) : (
-        <InputForm handleAddNote={addNotesHandler} />
-      )}
+      <InputForm handleAddNote={addNotesHandler} />
+
       {labelNotes.length ? (
         <div className={classes.notes}>
           {toggleView ? (

@@ -5,21 +5,18 @@ import { useDispatch, useSelector } from "react-redux";
 import ProgressBar from "components/progress-bar/progressBar";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
-import InputBar from "components/add-note/input-bar/inputBar";
-import InputForm from "components/add-note/input-form/inputForm";
+import InputForm from "components/add-note/inputForm";
 import { Typography } from "@mui/material";
 import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 
 const Home = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.userId);
   const notesLoading = useSelector((state) => state.notesReducer.loading);
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
-  const isOpenInputBar = useSelector(
-    (state) => state.toggleReducer.isOpenInputBar
-  );
+  const classes = useStyles({ isOpenDrawer });
+
   const notes = useSelector((state) =>
     state.notesReducer.notes.filter((note) => {
       return note.isDeleted != true;
@@ -36,13 +33,11 @@ const Home = () => {
 
   return (
     <div
-      className={isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft}
+      className={
+        isOpenDrawer ? classes.shiftContentRight : classes.shiftContentLeft
+      }
     >
-      {isOpenInputBar ? (
-        <InputBar />
-      ) : (
-        <InputForm handleAddNote={addNotesHandler} />
-      )}
+      <InputForm handleAddNote={addNotesHandler} />
       {notes.length ? (
         <div className={classes.notes}>
           {toggleView ? (

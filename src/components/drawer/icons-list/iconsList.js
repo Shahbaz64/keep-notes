@@ -1,22 +1,23 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import { List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { IconButton, List } from "@mui/material";
 import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import { nanoid } from "nanoid";
 import { useDispatch, useSelector } from "react-redux";
-import { style } from "components/drawer/items-list/itemsList.style";
+import { style, useStyles } from "components/drawer/icons-list/iconList.style";
 import { useLocation, useNavigate } from "react-router-dom";
 import path from "utils/constants/path.constant";
-import { labelPropType } from "utils/constants/prop-types.constant";
 import { setAppBarHeader } from "store";
+import { labelPropType } from "utils/constants/prop-types.constant";
 
-const ItemList = ({ handleDialog, labels }) => {
-  const dispatch = useDispatch();
+const IconList = ({ handleDialog, labels }) => {
+  const classes = useStyles();
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   const listItems = [
@@ -38,19 +39,19 @@ const ItemList = ({ handleDialog, labels }) => {
   ];
 
   return (
-    <List>
+    <List className={classes.iconsList}>
       {listItems.map((item) => {
         if (item.text === "Edit Labels") {
           {
             return (
               <Fragment key={nanoid()}>
                 {labels.map((label) => (
-                  <ListItem
-                    button
+                  <IconButton
                     key={label.id}
+                    size="large"
                     onClick={() => {
-                      navigate(`${path.LABELS}/${label.name}`);
                       dispatch(setAppBarHeader(label.name));
+                      navigate(`${path.LABELS}/${label.name}`);
                     }}
                     sx={
                       location.pathname === `${path.LABELS}/${label.name}`
@@ -60,24 +61,20 @@ const ItemList = ({ handleDialog, labels }) => {
                         : {}
                     }
                   >
-                    <ListItemIcon>
-                      <LabelOutlinedIcon />
-                    </ListItemIcon>
-                    <ListItemText>{label.name}</ListItemText>
-                  </ListItem>
+                    <LabelOutlinedIcon />
+                  </IconButton>
                 ))}
-                <ListItem button key={nanoid()} onClick={handleDialog}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText>{item.text}</ListItemText>
-                </ListItem>
+                <IconButton key={nanoid()} size="large" onClick={handleDialog}>
+                  {item.icon}
+                </IconButton>
               </Fragment>
             );
           }
         } else {
           return (
-            <ListItem
-              button
+            <IconButton
               key={nanoid()}
+              size="large"
               onClick={() => {
                 dispatch(setAppBarHeader(item.text));
                 navigate(item.path);
@@ -90,9 +87,8 @@ const ItemList = ({ handleDialog, labels }) => {
                   : {}
               }
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText>{item.text}</ListItemText>
-            </ListItem>
+              {item.icon}
+            </IconButton>
           );
         }
       })}
@@ -100,14 +96,14 @@ const ItemList = ({ handleDialog, labels }) => {
   );
 };
 
-ItemList.propTypes = {
+IconList.propTypes = {
   handleDialog: PropTypes.func,
   labels: labelPropType,
 };
 
-ItemList.defaultProps = {
+IconList.defaultProps = {
   labels: [],
   handleDialog: () => {},
 };
 
-export default ItemList;
+export default IconList;

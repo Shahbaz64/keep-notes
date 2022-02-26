@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isOpenInputBar: true,
+  isOpenSideIconBar: false,
   isOpenDrawer: true,
   toggleView: false,
   darkMode: false,
@@ -11,42 +11,18 @@ export const togglesSlice = createSlice({
   name: "togglesSlice",
   initialState,
   reducers: {
-    showInputBar: (state) => {
-      state.isOpenInputBar = true;
-    },
-    hideInputBar: (state) => {
-      state.isOpenInputBar = false;
-    },
-
     toggleDrawer: (state) => {
-      if (state.isOpenDrawer === true) {
-        state.isOpenDrawer = false;
-      } else {
-        state.isOpenDrawer = true;
-      }
+      state.isOpenDrawer = !state.isOpenDrawer;
+      state.isOpenSideIconBar = !state.isOpenSideIconBar;
     },
     toggleView: (state) => {
-      if (state.toggleView === true) {
-        state.toggleView = false;
-      } else {
-        state.toggleView = true;
-      }
+      state.toggleView = !state.toggleView;
     },
-    toggleMode: (state) => {
-      if (state.darkMode === true) {
-        state.darkMode = false;
-      } else {
-        state.darkMode = true;
-      }
+    toggleTheme: (state) => {
+      state.darkMode = !state.darkMode;
     },
   },
 });
 
-export const {
-  showInputBar,
-  hideInputBar,
-  toggleDrawer,
-  toggleMode,
-  toggleView,
-} = togglesSlice.actions;
+export const { toggleDrawer, toggleTheme, toggleView } = togglesSlice.actions;
 export default togglesSlice.reducer;

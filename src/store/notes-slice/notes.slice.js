@@ -6,10 +6,9 @@ const initialState = {
   notes: [],
   labels: [],
   searchTerm: "",
-  labelTerm: "",
-  loading: true,
   errorMsg: "",
-  useRefs: [],
+  loading: true,
+  appBarHeader: "Notes",
 };
 
 export const getNotes = createAsyncThunk("getNotes", async (userId) => {
@@ -136,6 +135,10 @@ export const notesSlice = createSlice({
       state.searchTerm = action.payload;
     },
 
+    setAppBarHeader: (state, action) => {
+      state.appBarHeader = action.payload;
+    },
+
     updateLabel: (state, action) => {
       state.labels.map((label) => {
         if (label.id === action.payload.labelId) {
@@ -240,6 +243,7 @@ export const {
   updateNote,
   setUserId,
   setSearchTerm,
+  setAppBarHeader,
   updateLabel,
   deleteLabel,
   deleteNote,

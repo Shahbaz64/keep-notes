@@ -13,13 +13,14 @@ import {
 import PropTypes from "prop-types";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
-import { style } from "components/label-dialog/labelDialog.style";
+import { style, useStyles } from "components/label-dialog/labelDialog.style";
 import EditLabels from "components/label-dialog/edit-labels/editLabels";
 import { labelPropType } from "utils/constants/prop-types.constant";
 
 const LabelDialog = ({ open, handleClose, handleLabelAdd, labels }) => {
   const [labelName, setLabelName] = useState("");
   const [error, setError] = useState("");
+  const classes = useStyles();
 
   const addLabelHandler = () => {
     if (labelName) {
@@ -38,6 +39,7 @@ const LabelDialog = ({ open, handleClose, handleLabelAdd, labels }) => {
   return (
     <Dialog
       open={open}
+      className={classes.dialogContent}
       onClose={() => {
         handleClose();
         setError("");

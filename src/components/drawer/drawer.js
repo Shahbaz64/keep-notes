@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { Drawer as MuiDrawer } from "@mui/material";
 import { useStyles } from "components/drawer/drawer.style";
 import ItemList from "components/drawer/items-list/itemsList";
-import { labelPropType } from "utils/constants/prop-types.constant";
 
-const Drawer = ({ handleDialog, labels }) => {
+const Drawer = ({ handleDialog }) => {
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+  const labels = useSelector((state) => state.notesReducer.labels);
   const classes = useStyles();
 
   return (
@@ -24,11 +24,6 @@ const Drawer = ({ handleDialog, labels }) => {
 
 Drawer.propTypes = {
   handleDialog: PropTypes.func.isRequired,
-  labels: labelPropType,
-};
-
-Drawer.defaultProps = {
-  labels: [],
 };
 
 export default Drawer;

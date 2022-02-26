@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { useStyles, style } from "components/notes/note-card/noteCard.style";
 import Actions from "components/notes/actions/actions";
-import LabelChips from "components/add-note/input-form/label-chips/labelChip";
+import LabelChips from "components/add-note/label-chips/labelChip";
 import NoteDialog from "components/notes/note-dialog/noteDialog";
 import HELPER from "utils/helpers/notes.helper";
 import { notePropType } from "utils/constants/prop-types.constant";
@@ -69,13 +69,13 @@ const NoteCard = ({ note, index }) => {
         {isHovered === index && (
           <div>
             <Actions noteId={note.id} />
-            <NoteDialog
-              open={isOpenNoteDialog}
-              handleCloseNoteDialog={handleCloseNoteDialog}
-              note={note}
-            />
           </div>
         )}
+        <NoteDialog
+          open={isOpenNoteDialog}
+          handleCloseNoteDialog={handleCloseNoteDialog}
+          note={note}
+        />
       </Card>
     </div>
   );

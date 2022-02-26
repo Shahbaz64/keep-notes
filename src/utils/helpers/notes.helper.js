@@ -7,11 +7,11 @@ import {
   deleteLabel,
   updateNote,
   deleteNote,
+  restoreNote,
+  deleteLabelsFromNote,
+  deleteAllNotes,
+  deleteNoteForever,
 } from "store";
-import { deleteLabelsFromNote } from "store";
-import { deleteAllNotes } from "store";
-import { deleteNoteForever } from "store";
-import { restoreNote } from "store";
 
 const UPDATELABEL = async (userId, labelId, labelName) => {
   try {
@@ -121,6 +121,7 @@ const DELETEALLNOTES = async (userId, noteId) => {
   }
   store.dispatch(deleteAllNotes());
 };
+
 const DELETENOTEFOREVER = async (userId, noteId) => {
   try {
     await deleteDoc(noteDocRef(userId, noteId));
@@ -129,6 +130,7 @@ const DELETENOTEFOREVER = async (userId, noteId) => {
   }
   store.dispatch(deleteNoteForever({ noteId }));
 };
+
 const RESTORENOTE = async (userId, noteId) => {
   try {
     await updateDoc(
