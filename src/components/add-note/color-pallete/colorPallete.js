@@ -1,19 +1,16 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { nanoid } from "nanoid";
+import PropTypes from "prop-types";
+import { Popover } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Grid, Tooltip, Box } from "@mui/material";
-import { Popover } from "@mui/material";
+import { useStyles } from "components/add-note/color-pallete/colorPallete.style";
+import { bgColors } from "components/add-note/color-pallete/bgColors";
 import InvertColorsOffOutlinedIcon from "@mui/icons-material/InvertColorsOffOutlined";
-import { bgColors } from "components/add-note/input-form/color-pallete/bgColors";
-import {
-  useStyles,
-  style,
-} from "components/add-note/input-form/color-pallete/colorPallete.style";
 
 const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
   const classes = useStyles();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   return (
     <Popover
@@ -28,7 +25,6 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
           <Box
             onClick={() => getColor("#FFFFFF", "#121212", noteId)}
             className={classes.avatar}
-            sx={{ ...style.box }}
           >
             <InvertColorsOffOutlinedIcon fontSize="small" />
           </Box>
@@ -40,10 +36,10 @@ const ColorPallete = ({ anchor, hideColorPallete, getColor, noteId }) => {
                 onClick={() =>
                   getColor(bgColor.lightColor, bgColor.darkColor, noteId)
                 }
+                className={classes.avatar}
                 sx={{
-                  ...style.box,
                   backgroundColor: `${
-                    mode ? bgColor.darkColor : bgColor.lightColor
+                    darkMode ? bgColor.darkColor : bgColor.lightColor
                   }`,
                 }}
               />

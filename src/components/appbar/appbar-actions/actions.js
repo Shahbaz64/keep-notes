@@ -12,7 +12,7 @@ import { style } from "components/appbar/appbar-actions/actions.style";
 
 const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const actions = [
     {
       icon: toggleView ? <GridViewIcon /> : <SplitscreenOutlinedIcon />,
@@ -20,8 +20,12 @@ const Actions = ({ handleNotesView, handleThemeMode, handleSignOut }) => {
       handleClick: handleNotesView,
     },
     {
-      icon: mode ? <Brightness5OutlinedIcon /> : <Brightness6OutlinedIcon />,
-      title: mode ? "Light Mode" : "Dark Mode",
+      icon: darkMode ? (
+        <Brightness5OutlinedIcon />
+      ) : (
+        <Brightness6OutlinedIcon />
+      ),
+      title: darkMode ? "Light Mode" : "Dark Mode",
       handleClick: handleThemeMode,
     },
     {

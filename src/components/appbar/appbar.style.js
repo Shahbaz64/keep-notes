@@ -8,6 +8,10 @@ export const useStyles = makeStyles((theme) => {
         maxHeight: "60px",
       },
     },
+    header: {
+      display: "flex",
+      alignItems: "center",
+    },
     toolbar: {
       alignItems: "center",
       backgroundColor: "text",
@@ -19,21 +23,50 @@ export const useStyles = makeStyles((theme) => {
       },
     },
     searchInput: {
-      opacity: "0.9",
+      width: "50%",
+      opacity: "0.8",
+      display: "flex",
       marginLeft: "5vw",
-      width: "40vw",
-      backgroundColor: "text",
-      padding: theme.spacing(1, 1),
+      alignItems: "center",
       borderRadius: theme.spacing(1),
-      "& .MuiSvgIcon-root": {
-        marginRight: theme.spacing(1),
-        marginLeft: theme.spacing(1),
+      padding: theme.spacing(0.275, 0.4),
+      backgroundColor: (props) => (props.darkMode ? "#292929" : "#F1F3F4"),
+      [theme.breakpoints.down("sm")]: {
+        display: (props) => (props.openSearchBar ? "flex" : "none"),
+        width: "85%",
       },
     },
+
+    closeIcon: {
+      display: "block",
+      [theme.breakpoints.down("sm")]: {
+        display: "block",
+      },
+    },
+
+    input: {
+      width: "100%",
+      backgroundColor: (props) => (props.darkMode ? "#292929" : "#F1F3F4"),
+    },
     actions: {
-      display: "flex",
+      display: (props) => (props.openSearchBar ? "none" : "flex"),
+      [theme.breakpoints.up("sm")]: {
+        display: "flex",
+      },
       marginLeft: "auto",
       marginRight: "0",
+    },
+    searchCard: {
+      display: "flex",
+      marginLeft: "4px",
+      width: "100%",
+    },
+
+    searchIcon: {
+      display: "blcok",
+      [theme.breakpoints.up("sm")]: {
+        display: "none",
+      },
     },
   };
 });

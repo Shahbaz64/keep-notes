@@ -5,8 +5,9 @@ import { Drawer as MuiDrawer } from "@mui/material";
 import { useStyles } from "components/drawer/drawer.style";
 import ItemList from "components/drawer/items-list/itemsList";
 
-const Drawer = ({ handleDialog, labels }) => {
+const Drawer = ({ handleDialog }) => {
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+  const labels = useSelector((state) => state.notesReducer.labels);
   const classes = useStyles();
 
   return (
@@ -23,11 +24,6 @@ const Drawer = ({ handleDialog, labels }) => {
 
 Drawer.propTypes = {
   handleDialog: PropTypes.func.isRequired,
-  labels: PropTypes.array,
-};
-
-Drawer.defaultProps = {
-  labels: [],
 };
 
 export default Drawer;

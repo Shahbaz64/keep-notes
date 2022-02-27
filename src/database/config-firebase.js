@@ -1,6 +1,7 @@
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "firebase/auth";
 import { doc, collection, getFirestore } from "firebase/firestore";
+import collections from "utils/constants/collections.constant";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,29 +17,21 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 export const userDocRef = (userId) => {
-  return doc(db, "users", userId);
+  return doc(db, collections.USERS, userId);
 };
 
 export const notesRef = (userId) => {
-  return collection(db, "users", userId, "notes");
+  return collection(db, collections.USERS, userId, collections.NOTES);
 };
 
 export const labelsRef = (userId) => {
-  return collection(db, "users", userId, "labels");
-};
-
-export const deletedNotesRef = (userId) => {
-  return collection(db, "users", userId, "deletedNotes");
+  return collection(db, collections.USERS, userId, collections.LABELS);
 };
 
 export const labelDocRef = (userId, docId) => {
-  return doc(db, "users", userId, "labels", docId);
+  return doc(db, collections.USERS, userId, collections.LABELS, docId);
 };
 
 export const noteDocRef = (userId, docId) => {
-  return doc(db, "users", userId, "notes", docId);
-};
-
-export const deletedNoteDocRef = (userId, docId) => {
-  return doc(db, "users", userId, "deletedNotes", docId);
+  return doc(db, collections.USERS, userId, collections.NOTES, docId);
 };

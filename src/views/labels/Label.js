@@ -1,54 +1,60 @@
 import React from "react";
-import { nanoid } from "nanoid";
+import { Typography } from "@mui/material";
 import { addNote } from "store";
 import { useParams } from "react-router-dom";
 import { useStyles } from "views/labels/Label.style";
 import { useSelector, useDispatch } from "react-redux";
-import InputBar from "components/add-note/input-bar/inputBar";
-import InputForm from "components/add-note/input-form/inputForm";
+import InputForm from "components/add-note/inputForm";
 import NotesGrid from "components/notes/notes-grid/notesGrid";
 import NotesList from "components/notes/notes-list/notesList";
+import LabelOutlinedIcon from "@mui/icons-material/LabelOutlined";
 
 const Label = () => {
   const { labelName } = useParams();
-  const classes = useStyles();
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notesReducer.notes);
   const userId = useSelector((state) => state.authReducer.user.userId);
   const toggleView = useSelector((state) => state.toggleReducer.toggleView);
   const isOpenDrawer = useSelector((state) => state.toggleReducer.isOpenDrawer);
+  const classes = useStyles({ isOpenDrawer });
   const labelNotes = [];
-  const isOpenInputBar = useSelector(
-    (state) => state.toggleReducer.isOpenInputBar
-  );
 
-  const addNotesHandler = (title, text, color, labels) => {
-    dispatch(addNote({ userId, title, text, color, labels }));
+  notes.map((note) => {
+    note.labels?.map((label) => {
+      if (label.name === labelName && note.isDeleted === false) {
+        labelNotes.push(note);
+      }
+    });
+  });
+
+  const addNotesHandler = (title, text, color, isDeleted, labels) => {
+    dispatch(addNote({ userId, title, text, color, isDeleted, labels }));
   };
 
   return (
     <div
-      className={isOpenDrawer ? classes.shiftTextRight : classes.shiftTextLeft}
+      className={
+        isOpenDrawer ? classes.shiftContentRight : classes.shiftContentLeft
+      }
     >
-      {isOpenInputBar ? (
-        <InputBar />
+      <InputForm handleAddNote={addNotesHandler} />
+
+      {labelNotes.length ? (
+        <div className={classes.notes}>
+          {toggleView ? (
+            <NotesList notes={labelNotes} />
+          ) : (
+            <NotesGrid notes={labelNotes} />
+          )}
+        </div>
       ) : (
-        <InputForm handleAddNote={addNotesHandler} />
+        <div className={classes.center}>
+          <LabelOutlinedIcon sx={{ fontSize: 80 }} />
+          <Typography variant="h6" color="inherit">
+            No notes with this label yet.
+          </Typography>
+        </div>
       )}
-      <div className={classes.notes}>
-        {notes.map((note) => {
-          note.labels.map((label) => {
-            if (label.name === labelName) {
-              labelNotes.push(note);
-            }
-          });
-        })}
-        {toggleView ? (
-          <NotesList key={nanoid()} notes={labelNotes} />
-        ) : (
-          <NotesGrid key={nanoid()} notes={labelNotes} />
-        )}
-      </div>
     </div>
   );
 };

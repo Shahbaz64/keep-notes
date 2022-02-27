@@ -6,33 +6,34 @@ import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import { nanoid } from "nanoid";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { style } from "components/drawer/items-list/itemsList.style";
 import { useLocation, useNavigate } from "react-router-dom";
+import path from "utils/constants/path.constant";
+import { labelPropType } from "utils/constants/prop-types.constant";
+import { setAppBarHeader } from "store";
 
-const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
+const ItemList = ({ handleDialog, labels }) => {
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
 
   const listItems = [
     {
       icon: <LightbulbOutlinedIcon />,
       text: "Notes",
-      path: "/home",
-      handleClick: handleoNotes,
+      path: path.HOME,
     },
     {
       icon: <ModeEditOutlinedIcon />,
       text: "Edit Labels",
       path: "",
-      handleClick: handleDialog,
     },
     {
       icon: <DeleteOutlinedIcon />,
       text: "Bin",
-      path: "/bin",
-      handleClick: handleBinFolder,
+      path: path.BIN,
     },
   ];
 
@@ -48,11 +49,12 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
                     button
                     key={label.id}
                     onClick={() => {
-                      navigate(`/labels/${label.name}`);
+                      navigate(`${path.LABELS}/${label.name}`);
+                      dispatch(setAppBarHeader(label.name));
                     }}
                     sx={
-                      location.pathname === `/labels/${label.name}`
-                        ? mode
+                      location.pathname === `${path.LABELS}/${label.name}`
+                        ? darkMode
                           ? { ...style.darkActive }
                           : { ...style.lightActive }
                         : {}
@@ -64,7 +66,7 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
                     <ListItemText>{label.name}</ListItemText>
                   </ListItem>
                 ))}
-                <ListItem button key={nanoid()} onClick={item.handleClick}>
+                <ListItem button key={nanoid()} onClick={handleDialog}>
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText>{item.text}</ListItemText>
                 </ListItem>
@@ -76,10 +78,13 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
             <ListItem
               button
               key={nanoid()}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                dispatch(setAppBarHeader(item.text));
+                navigate(item.path);
+              }}
               sx={
                 location.pathname === item.path
-                  ? mode
+                  ? darkMode
                     ? { ...style.darkActive }
                     : { ...style.lightActive }
                   : {}
@@ -97,13 +102,12 @@ const ItemList = ({ handleoNotes, handleDialog, handleBinFolder, labels }) => {
 
 ItemList.propTypes = {
   handleDialog: PropTypes.func,
-  handleoNotes: PropTypes.func,
-  handleBinFolder: PropTypes.func,
-  labels: PropTypes.array,
+  labels: labelPropType,
 };
 
 ItemList.defaultProps = {
   labels: [],
+  handleDialog: () => {},
 };
 
 export default ItemList;

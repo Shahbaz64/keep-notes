@@ -1,33 +1,29 @@
-import * as yup from "yup";
 import { useFormik } from "formik";
 import PropTypes from "prop-types";
 import { Dialog } from "@mui/material";
 import React, { useState } from "react";
-import { hideNoteDialog, deleteNote, updateNote } from "store";
+import HELPER from "utils/helpers/notes.helper";
 import PaletteIcon from "@mui/icons-material/Palette";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { validationSchema } from "utils/schema/schema";
 import { TextField, IconButton, Button, Tooltip } from "@mui/material";
 import { useStyles } from "components/notes/note-dialog/noteDialog.style";
-import LabelChips from "components/add-note/input-form/label-chips/labelChip";
-import LabelsList from "components/add-note/input-form/labels-list/labelsList";
+import LabelChips from "components/add-note/label-chips/labelChip";
+import LabelsList from "components/add-note/labels-list/labelsList";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import ColorPallete from "components/add-note/input-form/color-pallete/colorPallete";
+import ColorPallete from "components/add-note/color-pallete/colorPallete";
+import { notePropType } from "utils/constants/prop-types.constant";
 
-const validationSchema = yup.object({
-  title: yup.string(),
-  text: yup.string(),
-  color: yup.object(),
-  labels: yup.array(),
-});
-
-const NoteDialog = ({ open, note }) => {
+const NoteDialog = ({ open, handleCloseNoteDialog, note }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const mode = useSelector((state) => state.toggleReducer.mode);
+  const [labelTerm, setLabelTerm] = useState("");
   const [colorAnchor, setColorAnchor] = useState(null);
   const [labelAnchor, setLabelAnchor] = useState(null);
-  const labels = useSelector((state) => state.notesReducer.labels);
   const [labelChips, setLabelChips] = useState(note.labels);
+  const [index, setIndex] = useState(-1);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
+  const labels = useSelector((state) => state.notesReducer.labels);
+  const userId = useSelector((state) => state.authReducer.user.userId);
 
   const formik = useFormik({
     initialValues: {
@@ -40,20 +36,16 @@ const NoteDialog = ({ open, note }) => {
       labelChips: labelChips,
     },
     onSubmit: (values) => {
-      if (!values.title || !values.text) {
-        handleClose();
-      } else {
-        dispatch(
-          updateNote({
-            noteId: note.id,
-            title: values.title,
-            text: values.text,
-            color: values.color,
-            labels: values.labelChips,
-          })
-        );
-        handleClose();
-      }
+      const newNote = {
+        title: values.title,
+        text: values.text,
+        color: values.color,
+        labels: values.labelChips?.map((label) => {
+          return { id: label.id, name: label.name };
+        }),
+      };
+      HELPER.UPDATENOTE(userId, note.id, newNote);
+      handleClose();
     },
     validationSchema: validationSchema,
   });
@@ -66,10 +58,15 @@ const NoteDialog = ({ open, note }) => {
   };
 
   const addLabelChip = (id, name, notes) => {
-    formik.values.labelChips = [
-      ...formik.values.labelChips,
-      { id: id, name: name, notes: notes },
-    ];
+    const alreadyLabelChips = formik.values.labelChips.map(
+      (label) => label.name
+    );
+    if (!alreadyLabelChips.includes(name)) {
+      formik.values.labelChips = [
+        ...formik.values.labelChips,
+        { id: id, name: name, notes: notes },
+      ];
+    }
   };
 
   const showLabels = (event) => {
@@ -81,7 +78,7 @@ const NoteDialog = ({ open, note }) => {
   };
 
   const handleClose = () => {
-    dispatch(hideNoteDialog());
+    handleCloseNoteDialog();
     formik.values.title = note.title;
     formik.values.text = note.text;
   };
@@ -100,8 +97,24 @@ const NoteDialog = ({ open, note }) => {
   };
 
   const deleteNoteHandler = (noteId) => {
-    dispatch(deleteNote(noteId));
+    HELPER.DELETENOTE(userId, noteId);
     handleClose();
+  };
+
+  const handleKeyUp = (e) => {
+    if (e.target.value.length <= index) {
+      setLabelAnchor(null);
+    }
+    const value = e.target.value.slice(0, -1);
+    if (e.key === "#") {
+      showLabels(e);
+      setIndex(e.target.value.lastIndexOf("#") - 1);
+      formik.values.text = value;
+    } else if (e.key === " ") {
+      setLabelAnchor(null);
+    }
+    const label = e.target.value.substring(index + 1);
+    setLabelTerm(label);
   };
 
   return (
@@ -120,7 +133,7 @@ const NoteDialog = ({ open, note }) => {
           onSubmit={formik.handleSubmit}
           style={{
             backgroundColor: `${
-              mode
+              darkMode
                 ? formik.values.color.darkColor
                 : formik.values.color.lightColor
             }`,
@@ -132,6 +145,9 @@ const NoteDialog = ({ open, note }) => {
             placeholder="Title"
             value={formik.values.title}
             onChange={formik.handleChange}
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            helperText={formik.touched.title && formik.errors.title}
+            onBlur={formik.handleBlur}
             InputProps={{
               disableUnderline: true,
               style: { fontSize: 18, fontWeight: "400" },
@@ -141,25 +157,23 @@ const NoteDialog = ({ open, note }) => {
             name="text"
             multiline
             variant="standard"
-            placeholder="Take a Note..."
+            placeholder="Take a note..."
             value={formik.values.text}
             onChange={formik.handleChange}
+            error={formik.touched.text && Boolean(formik.errors.text)}
+            helperText={formik.touched.text && formik.errors.text}
+            onBlur={formik.handleBlur}
             InputProps={{
               disableUnderline: true,
             }}
-            onKeyDown={(event) => {
-              if (event.key === "#") {
-                showLabels(event);
-              } else {
-                setLabelAnchor(null);
-              }
-            }}
+            onKeyUp={handleKeyUp}
           />
           <LabelsList
             anchor={labelAnchor}
             hideLabels={hideLabels}
             addLabelChip={addLabelChip}
             labels={labels}
+            labelTerm={labelTerm}
           />
           <LabelChips
             chips={formik.values.labelChips}
@@ -179,9 +193,7 @@ const NoteDialog = ({ open, note }) => {
                 noteId={note.id}
               />
               <Tooltip title="Delete Note">
-                <IconButton
-                  onClick={() => deleteNoteHandler({ noteId: note.id })}
-                >
+                <IconButton onClick={() => deleteNoteHandler(note.id)}>
                   <DeleteOutlineOutlinedIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
@@ -198,7 +210,8 @@ const NoteDialog = ({ open, note }) => {
 
 NoteDialog.propTypes = {
   open: PropTypes.bool.isRequired,
-  note: PropTypes.object.isRequired,
+  handleCloseNoteDialog: PropTypes.func.isRequired,
+  note: notePropType,
 };
 
 export default NoteDialog;

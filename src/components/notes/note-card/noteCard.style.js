@@ -7,7 +7,9 @@ export const useStyles = makeStyles({
     "& .MuiCardContent-root": {
       paddingTop: "6px",
       marginBottom: "6px",
-      paddingBottom: "2px",
+    },
+    "& .MuiCardContent-root:last-child ": {
+      paddingBottom: "6px",
     },
   },
   innerText: {

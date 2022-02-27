@@ -1,7 +1,4 @@
-import { signOut } from "firebase/auth";
-import { setDoc } from "firebase/firestore";
 import { createSlice } from "@reduxjs/toolkit";
-import { userDocRef, auth } from "database/config-firebase";
 
 const initialState = {
   isLoading: true,
@@ -19,10 +16,8 @@ export const authSlice = createSlice({
   reducers: {
     signInUser: (state, action) => {
       state.user = action.payload;
-      setDoc(userDocRef(state.user.userId), {});
     },
     signOutUser: (state) => {
-      signOut(auth);
       state.user.userId = "";
       state.user.email = "";
       state.user.displayName = "";

@@ -1,29 +1,37 @@
-import React from "react";
-import { showSnackBar } from "store";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "database/config-firebase";
+import path from "utils/constants/path.constant";
 import SnackBar from "components/snackbar/snackBar";
 import SigninForm from "components/signIn-form/signinForm";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const SignInPage = () => {
-  const dispatch = useDispatch();
+  const [isOpenSnackBar, setIsOpenSnackBar] = useState(false);
   const navigate = useNavigate();
+
+  const handleCloseSnackBar = () => {
+    setIsOpenSnackBar(false);
+  };
 
   const signInHandler = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider).then(navigate("/home"));
-    } catch {
-      dispatch(showSnackBar());
+      await signInWithPopup(auth, provider);
+      navigate(path.HOME);
+    } catch (err) {
+      setIsOpenSnackBar(true);
+      console.error("Error!", err);
     }
   };
-
   return (
     <div>
       <SigninForm handleSignIn={signInHandler} />
-      <SnackBar msg="Sign In with google Failed." />
+      <SnackBar
+        open={isOpenSnackBar}
+        handleClose={handleCloseSnackBar}
+        msg="Sign In with google Failed."
+      />
     </div>
   );
 };

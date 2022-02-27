@@ -1,25 +1,29 @@
-import React from "react";
 import PropTypes from "prop-types";
-import AppBar from "components/appbar/appbar";
+import React, { useState } from "react";
+import { addLabel } from "store";
 import Drawer from "components/drawer/drawer";
+import AppBar from "components/appbar/appbar";
 import { useDispatch, useSelector } from "react-redux";
-import { signOutUser, showLabelDialog, addLabel } from "store";
 import LabelDialog from "components/label-dialog/labelDialog";
+import SideBar from "components/drawer/side-bar/sideIconBar";
+import userHelper from "utils/helpers/user.helper";
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
   const labels = useSelector((state) => state.notesReducer.labels);
   const userId = useSelector((state) => state.authReducer.user.userId);
-  const isOpenLabelDialog = useSelector(
-    (state) => state.toggleReducer.isOpenLabelDialog
-  );
+  const [isOpenLabelDialog, setIsOpenLabelDialog] = useState(false);
+
+  const handleCloseLabelDialog = () => {
+    setIsOpenLabelDialog(false);
+  };
 
   const signOutHandler = () => {
-    dispatch(signOutUser());
+    userHelper.SIGNOUTUSER();
   };
 
   const openDialogHandler = () => {
-    dispatch(showLabelDialog());
+    setIsOpenLabelDialog(true);
   };
 
   const addLabelHandler = (label) => {
@@ -30,8 +34,10 @@ const Layout = ({ children }) => {
     <div>
       <AppBar handleSignOut={signOutHandler} />
       <Drawer handleDialog={openDialogHandler} labels={labels} />
+      <SideBar handleDialog={openDialogHandler} />
       <LabelDialog
         open={isOpenLabelDialog}
+        handleClose={handleCloseLabelDialog}
         labels={labels}
         handleLabelAdd={addLabelHandler}
       />
@@ -43,5 +49,4 @@ const Layout = ({ children }) => {
 Layout.propTypes = {
   children: PropTypes.any,
 };
-
 export default Layout;

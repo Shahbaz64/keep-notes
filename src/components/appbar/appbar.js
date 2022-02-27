@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,28 +11,34 @@ import {
   IconButton,
   SvgIcon,
   Divider,
+  Card,
 } from "@mui/material";
-import { toggleDrawer, toggleView } from "store";
-import { useMediaQuery } from "@mui/material";
+import { toggleDrawer, toggleView, toggleTheme } from "store";
+import { setSearchTerm } from "store";
+import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import { useStyles, style } from "components/appbar/appbar.style";
 import Actions from "components/appbar/appbar-actions/actions";
+import { useStyles, style } from "components/appbar/appbar.style";
 import { ReactComponent as KeepIcon } from "assets/google-keep.svg";
-import { toggleMode } from "store";
+import path from "utils/constants/path.constant";
+import CloseIcon from "@mui/icons-material/Close";
 
 const AppBar = ({ handleSignOut }) => {
-  const isSearchBar = useMediaQuery("(min-width: 660px)");
+  const [openSearchBar, setOpenSearchBar] = useState(false);
+  const [cancelButton, setCancelButton] = useState(false);
+  const darkMode = useSelector((state) => state.toggleReducer.darkMode);
+  const appBarHeader = useSelector((state) => state.notesReducer.appBarHeader);
   const dispatch = useDispatch();
-  const classes = useStyles();
+  const classes = useStyles({ openSearchBar, darkMode });
+  const navigate = useNavigate();
 
-  const mode = useSelector((state) => state.toggleReducer.mode);
   const handleNotesView = () => {
     dispatch(toggleView());
   };
 
   const handleThemeMode = () => {
-    dispatch(toggleMode());
+    dispatch(toggleTheme());
   };
 
   return (
@@ -55,31 +61,52 @@ const AppBar = ({ handleSignOut }) => {
             <MenuIcon />
           </IconButton>
         </Tooltip>
-        <SvgIcon fontSize="large" component={KeepIcon} inheritViewBox />
-        <Typography fontSize="large">Keep</Typography>
+        {appBarHeader === "Notes" ? (
+          <div className={classes.header}>
+            <SvgIcon fontSize="large" component={KeepIcon} inheritViewBox />
+            <Typography fontSize="large">Keep</Typography>
+          </div>
+        ) : (
+          <Typography fontSize="large">{appBarHeader}</Typography>
+        )}
         <Grid container alignItems="center">
-          {isSearchBar && (
-            <Grid item>
+          <div className={classes.searchInput}>
+            <IconButton>
+              <SearchIcon />
+            </IconButton>
+            <Card elevation={0} className={classes.searchCard}>
               <InputBase
-                className={classes.searchInput}
-                sx={
-                  mode
-                    ? { backgroundColor: "primary.light" }
-                    : { backgroundColor: "#F1F3F4" }
-                }
                 placeholder="Search"
-                startAdornment={<SearchIcon />}
+                className={classes.input}
+                onChange={(e) => {
+                  dispatch(setSearchTerm(e.target.value));
+                }}
+                onFocus={() => {
+                  setCancelButton(true);
+                  navigate(path.SEARCH);
+                }}
               />
-            </Grid>
-          )}
-          <div className={classes.actions}>
-            {!isSearchBar && (
-              <Grid item>
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
-              </Grid>
+            </Card>
+            {cancelButton && (
+              <IconButton
+                className={classes.closeIcon}
+                onClick={() => {
+                  navigate(path.HOME);
+                  setCancelButton(false);
+                  setOpenSearchBar(false);
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
             )}
+          </div>
+
+          <div className={classes.actions}>
+            <Grid item className={classes.searchIcon}>
+              <IconButton onClick={() => setOpenSearchBar(true)}>
+                <SearchIcon />
+              </IconButton>
+            </Grid>
             <Grid item>
               <Actions
                 handleSignOut={handleSignOut}
