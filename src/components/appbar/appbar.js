@@ -124,7 +124,6 @@ const AppBar = ({ handleSignOut }) => {
 
 AppBar.propTypes = {
   handleSignOut: PropTypes.func.isRequired,
-  header: PropTypes.string.isRequired,
 };
 
 export default AppBar;

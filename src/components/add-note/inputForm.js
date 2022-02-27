@@ -44,6 +44,7 @@ const InputForm = ({ handleAddNote }) => {
   const [labelAnchor, setLabelAnchor] = useState(null);
   const [labelChips, setLabelChips] = useState([]);
   const [labelTerm, setLabelTerm] = useState("");
+  const [index, setIndex] = useState(-1);
   const darkMode = useSelector((state) => state.toggleReducer.darkMode);
   const labels = useSelector((state) => state.notesReducer.labels);
 
@@ -91,13 +92,19 @@ const InputForm = ({ handleAddNote }) => {
   };
 
   const handleKeyUp = (e) => {
-    const label = e.target.value.substring(e.target.value.lastIndexOf("#") + 1);
-    setLabelTerm(label);
+    if (e.target.value.length <= index) {
+      setLabelAnchor(null);
+    }
+    const value = e.target.value.slice(0, -1);
     if (e.key === "#") {
       showLabels(e);
+      setIndex(e.target.value.lastIndexOf("#") - 1);
+      formik.values.text = value;
     } else if (e.key === " ") {
       setLabelAnchor(null);
     }
+    const label = e.target.value.substring(index + 1);
+    setLabelTerm(label);
   };
 
   if (inputBar) {

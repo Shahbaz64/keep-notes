@@ -1,15 +1,3 @@
-// import { makeStyles } from "@mui/styles";
-
-// export const useStyles = makeStyles((theme) => {
-//   return {
-//     text: {
-//       [theme.breakpoints.down("sm")]: {
-//         display: "none",
-//       },
-//     },
-//   };
-// });
-
 export const style = {
   lightActive: {
     backgroundColor: "#FEEFC3",

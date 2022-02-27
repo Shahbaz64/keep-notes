@@ -18,5 +18,6 @@ export const style = {
   itemText: {
     marginLeft: "10px",
     fontWeight: "bold",
+    wordBreak: "break-all",
   },
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   List,
@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { addLabel } from "store";
 import { useSelector } from "react-redux";
 import { labelPropType } from "utils/constants/prop-types.constant";
+import { useState } from "react";
 
 const LabelsList = ({
   anchor,
@@ -28,9 +29,22 @@ const LabelsList = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.authReducer.user.userId);
+  const [labelExist, setLabelExist] = useState(false);
   const filteredLabels = labels.filter((label) => {
-    return label.name.includes(labelTerm);
+    if (labelTerm) {
+      return label.name.includes(labelTerm);
+    }
   });
+
+  useEffect(() => {
+    filteredLabels.map((label) => {
+      if (label.name === labelTerm) {
+        setLabelExist(true);
+      } else {
+        setLabelExist(false);
+      }
+    });
+  }, [labelTerm]);
 
   const createLabelHandler = async () => {
     if (labelTerm) {
@@ -56,7 +70,7 @@ const LabelsList = ({
       transformOrigin={{ vertical: "top", horizontal: "left" }}
     >
       <List sx={{ ...style.list }}>
-        {filteredLabels.map((label) => {
+        {(!labelTerm ? labels : filteredLabels).map((label) => {
           return (
             <ListItem
               button
@@ -73,17 +87,19 @@ const LabelsList = ({
             </ListItem>
           );
         })}
-        {filteredLabels.length !== 0 && <Divider />}
-        <ListItem
-          button
-          sx={{ ...style.listItem }}
-          onClick={createLabelHandler}
-        >
-          <AddIcon fontSize="small" />
-          <Typography variant="body2" sx={{ ...style.itemText }}>
-            create `{labelTerm}`
-          </Typography>
-        </ListItem>
+        {!labelExist && filteredLabels.length !== 0 && <Divider />}
+        {!labelExist && labelTerm && (
+          <ListItem
+            button
+            sx={{ ...style.listItem }}
+            onClick={createLabelHandler}
+          >
+            <AddIcon fontSize="small" />
+            <Typography variant="body2" sx={{ ...style.itemText }}>
+              create `{labelTerm}`
+            </Typography>
+          </ListItem>
+        )}
       </List>
     </Popover>
   );
